@@ -1,0 +1,491 @@
+import type { Complaint, ComplaintStatus } from "@/types/complaint";
+import { MOCK_STAFF, MOCK_CURRENT_STAFF_ID } from "@/lib/mock/staff";
+
+/**
+ * ILLUSTRATIVE MOCK DATA — NOT REAL CAMPUS STATISTICS.
+ *
+ * These records exist only to shape the Phase 1 interface. Every number,
+ * complaint and status shown in the app during Phase 1 comes from this file and
+ * is fictional. It will be replaced by Supabase queries in Phase 2.
+ */
+
+const [maintenance, housekeeping, messA, messB, electrician, network, messC] =
+  MOCK_STAFF;
+
+export const MOCK_COMPLAINTS: Complaint[] = [
+  {
+    id: "cmp-1018",
+    reference: "CMP-1018",
+    title: "No running water on the second floor",
+    description:
+      "There has been no water supply in the washrooms on the second floor since Monday morning. Around forty students are affected and we are carrying buckets from the ground floor.",
+    status: "in_progress",
+    priority: "critical",
+    area: "hostel",
+    category: "water",
+    location: "Block C, Second floor washrooms",
+    studentName: "Aarav Sharma",
+    studentInitials: "AS",
+    createdAt: "12 Mar, 8:20 AM",
+    updatedAt: "13 Mar, 11:05 AM",
+    assignedStaff: maintenance,
+    resolutionNote:
+      "Overhead tank valve found stuck. Repaired and tank refilled on 13 March.",
+    timeline: [
+      {
+        status: "reported",
+        at: "12 Mar, 8:20 AM",
+        note: "Complaint submitted by the student.",
+        actorName: "Aarav Sharma",
+      },
+      {
+        status: "assigned",
+        at: "12 Mar, 9:15 AM",
+        note: "Routed to the maintenance team.",
+        actorName: "Meera Iyer",
+      },
+      {
+        status: "in_progress",
+        at: "12 Mar, 2:40 PM",
+        note: "Site inspection started.",
+        actorName: "Rakesh Yadav",
+      },
+    ],
+  },
+  {
+    id: "cmp-1023",
+    reference: "CMP-1023",
+    title: "Mess food served cold during lunch",
+    description:
+      "For the past week the roti and sabzi have been reaching the dining hall cold by the time we sit down. The same is true for the curry rotation on weekends.",
+    status: "assigned",
+    priority: "high",
+    area: "mess",
+    category: "food_quality",
+    location: "Mess 2, Main Dining Hall",
+    studentName: "Aarav Sharma",
+    studentInitials: "AS",
+    createdAt: "13 Mar, 1:05 PM",
+    updatedAt: "13 Mar, 3:30 PM",
+    assignedStaff: messA,
+    timeline: [
+      {
+        status: "reported",
+        at: "13 Mar, 1:05 PM",
+        note: "Complaint submitted by the student.",
+        actorName: "Aarav Sharma",
+      },
+      {
+        status: "assigned",
+        at: "13 Mar, 3:30 PM",
+        note: "Assigned to the Mess 2 coordinator.",
+        actorName: "Meera Iyer",
+      },
+    ],
+  },
+  {
+    id: "cmp-1009",
+    reference: "CMP-1009",
+    title: "Corridor light flickering outside room 214",
+    description:
+      "The light outside room 214 flickers continuously and goes off for a few seconds. It is dark at night and feels unsafe walking back.",
+    status: "resolved",
+    priority: "medium",
+    area: "hostel",
+    category: "electricity",
+    location: "Block A, Outside Room 214",
+    studentName: "Aarav Sharma",
+    studentInitials: "AS",
+    createdAt: "9 Mar, 6:45 PM",
+    updatedAt: "11 Mar, 10:10 AM",
+    assignedStaff: electrician,
+    resolutionNote:
+      "Loose tube holder replaced and the driver checked. Light is working normally.",
+    timeline: [
+      {
+        status: "reported",
+        at: "9 Mar, 6:45 PM",
+        note: "Complaint submitted by the student.",
+        actorName: "Aarav Sharma",
+      },
+      {
+        status: "assigned",
+        at: "9 Mar, 7:30 PM",
+        note: "Assigned to facilities.",
+        actorName: "Meera Iyer",
+      },
+      {
+        status: "in_progress",
+        at: "10 Mar, 9:00 AM",
+        note: "Electrician attended the location.",
+        actorName: "Deepak Rathore",
+      },
+      {
+        status: "resolved",
+        at: "11 Mar, 10:10 AM",
+        note: "Repair completed.",
+        actorName: "Deepak Rathore",
+      },
+    ],
+  },
+  {
+    id: "cmp-1014",
+    reference: "CMP-1014",
+    title: "Washroom not cleaned for three days",
+    description:
+      "The washroom near the study hall has not been cleaned since the weekend. There is a strong smell and the bins have not been emptied.",
+    status: "reopened",
+    priority: "high",
+    area: "hostel",
+    category: "cleanliness",
+    location: "Block C, Ground floor washroom",
+    studentName: "Aarav Sharma",
+    studentInitials: "AS",
+    createdAt: "10 Mar, 7:20 AM",
+    updatedAt: "12 Mar, 9:00 AM",
+    assignedStaff: housekeeping,
+    resolutionNote:
+      "Deep clean completed on 11 March, but the student reports it has slipped again.",
+    timeline: [
+      {
+        status: "reported",
+        at: "10 Mar, 7:20 AM",
+        note: "Complaint submitted by the student.",
+        actorName: "Aarav Sharma",
+      },
+      {
+        status: "assigned",
+        at: "10 Mar, 8:00 AM",
+        note: "Assigned to housekeeping.",
+        actorName: "Meera Iyer",
+      },
+      {
+        status: "in_progress",
+        at: "10 Mar, 11:30 AM",
+        note: "Cleaner dispatched.",
+        actorName: "Sunita Devi",
+      },
+      {
+        status: "resolved",
+        at: "11 Mar, 4:20 PM",
+        note: "Deep clean completed.",
+        actorName: "Sunita Devi",
+      },
+      {
+        status: "reopened",
+        at: "12 Mar, 9:00 AM",
+        note: "Student reported the issue was not resolved.",
+        actorName: "Aarav Sharma",
+      },
+    ],
+  },
+  {
+    id: "cmp-1027",
+    reference: "CMP-1027",
+    title: "Wi-Fi drops every evening around 7 PM",
+    description:
+      "The hostel Wi-Fi becomes unusable between 7 and 9 PM when everyone is back and streaming. Speed tests drop to almost nothing during that window.",
+    status: "reported",
+    priority: "medium",
+    area: "hostel",
+    category: "internet",
+    location: "Block C, Entire floor",
+    studentName: "Priya Nair",
+    studentInitials: "PN",
+    createdAt: "14 Mar, 8:05 AM",
+    updatedAt: "14 Mar, 8:05 AM",
+    assignedStaff: null,
+    timeline: [
+      {
+        status: "reported",
+        at: "14 Mar, 8:05 AM",
+        note: "Complaint submitted by the student.",
+        actorName: "Priya Nair",
+      },
+    ],
+  },
+  {
+    id: "cmp-1031",
+    reference: "CMP-1031",
+    title: "Food served with a foreign object in the bowl",
+    description:
+      "A piece of plastic was found in the dal at dinner. The mess staff were informed immediately but nothing has changed since.",
+    status: "in_progress",
+    priority: "critical",
+    area: "mess",
+    category: "food_hygiene",
+    location: "Mess 1, Kitchen entrance",
+    studentName: "Rohan Verma",
+    studentInitials: "RV",
+    createdAt: "14 Mar, 9:40 PM",
+    updatedAt: "15 Mar, 10:15 AM",
+    assignedStaff: messB,
+    resolutionNote:
+      "Kitchen storage audit started. Supplier trace check is pending.",
+    timeline: [
+      {
+        status: "reported",
+        at: "14 Mar, 9:40 PM",
+        note: "Complaint submitted by the student.",
+        actorName: "Rohan Verma",
+      },
+      {
+        status: "assigned",
+        at: "15 Mar, 8:10 AM",
+        note: "Escalated to Mess 1 coordinator.",
+        actorName: "Meera Iyer",
+      },
+      {
+        status: "in_progress",
+        at: "15 Mar, 10:15 AM",
+        note: "Kitchen audit started.",
+        actorName: "Anjali Menon",
+      },
+    ],
+  },
+  {
+    id: "cmp-1002",
+    reference: "CMP-1002",
+    title: "Ceiling fan stopped working in study room",
+    description:
+      "The fan in the second-floor study room has not turned on since last week. The room gets very warm in the afternoon.",
+    status: "resolved",
+    priority: "low",
+    area: "hostel",
+    category: "maintenance",
+    location: "Block B, Second floor study room",
+    studentName: "Neha Gupta",
+    studentInitials: "NG",
+    createdAt: "7 Mar, 5:15 PM",
+    updatedAt: "9 Mar, 12:30 PM",
+    assignedStaff: electrician,
+    resolutionNote: "Capacitor replaced and the regulator recalibrated.",
+    timeline: [
+      {
+        status: "reported",
+        at: "7 Mar, 5:15 PM",
+        note: "Complaint submitted by the student.",
+        actorName: "Neha Gupta",
+      },
+      {
+        status: "assigned",
+        at: "7 Mar, 6:00 PM",
+        note: "Assigned to facilities.",
+        actorName: "Meera Iyer",
+      },
+      {
+        status: "in_progress",
+        at: "8 Mar, 10:00 AM",
+        note: "Electrician attended.",
+        actorName: "Deepak Rathore",
+      },
+      {
+        status: "resolved",
+        at: "9 Mar, 12:30 PM",
+        note: "Repair completed.",
+        actorName: "Deepak Rathore",
+      },
+    ],
+  },
+  {
+    id: "cmp-1035",
+    reference: "CMP-1035",
+    title: "Mess gate closes early during exams",
+    description:
+      "During the exam period the mess closes at 8 PM instead of 9:30 PM, which leaves no time to eat after a late paper.",
+    status: "reported",
+    priority: "low",
+    area: "mess",
+    category: "other",
+    location: "Mess 2, Main gate",
+    studentName: "Kabir Singh",
+    studentInitials: "KS",
+    createdAt: "15 Mar, 2:25 PM",
+    updatedAt: "15 Mar, 2:25 PM",
+    assignedStaff: null,
+    timeline: [
+      {
+        status: "reported",
+        at: "15 Mar, 2:25 PM",
+        note: "Complaint submitted by the student.",
+        actorName: "Kabir Singh",
+      },
+    ],
+  },
+  {
+    id: "cmp-1029",
+    reference: "CMP-1029",
+    title: "Unauthorised entry through the back gate",
+    description:
+      "The back gate of the hostel block is often left unlocked at night. This was reported twice in the same week.",
+    status: "assigned",
+    priority: "high",
+    area: "hostel",
+    category: "security",
+    location: "Block C, Back gate",
+    studentName: "Simran Kaur",
+    studentInitials: "SK",
+    createdAt: "14 Mar, 10:10 PM",
+    updatedAt: "15 Mar, 9:00 AM",
+    assignedStaff: securitySupervisor(),
+    timeline: [
+      {
+        status: "reported",
+        at: "14 Mar, 10:10 PM",
+        note: "Complaint submitted by the student.",
+        actorName: "Simran Kaur",
+      },
+      {
+        status: "assigned",
+        at: "15 Mar, 9:00 AM",
+        note: "Assigned to hostel security.",
+        actorName: "Meera Iyer",
+      },
+    ],
+  },
+  {
+    id: "cmp-1038",
+    reference: "CMP-1038",
+    title: "Mess serving counter queue is badly managed",
+    description:
+      "At peak lunch hours the queue at the serving counter spills into the dining area. Students are skipping meals because of the wait.",
+    status: "in_progress",
+    priority: "medium",
+    area: "mess",
+    category: "food_quality",
+    location: "Mess 1, Serving counter",
+    studentName: "Aditya Bose",
+    studentInitials: "AB",
+    createdAt: "15 Mar, 1:50 PM",
+    updatedAt: "16 Mar, 11:20 AM",
+    assignedStaff: messC,
+    resolutionNote: "A second counter is being opened during the 12:30–2:00 window.",
+    timeline: [
+      {
+        status: "reported",
+        at: "15 Mar, 1:50 PM",
+        note: "Complaint submitted by the student.",
+        actorName: "Aditya Bose",
+      },
+      {
+        status: "assigned",
+        at: "15 Mar, 4:00 PM",
+        note: "Assigned to Mess 1.",
+        actorName: "Meera Iyer",
+      },
+      {
+        status: "in_progress",
+        at: "16 Mar, 11:20 AM",
+        note: "Trial run of the second counter.",
+        actorName: "Imran Qureshi",
+      },
+    ],
+  },
+  {
+    id: "cmp-1041",
+    reference: "CMP-1041",
+    title: "Charging point in the reading room is broken",
+    description:
+      "Only one of the six sockets in the reading room works. The rest have no power at all.",
+    status: "assigned",
+    priority: "low",
+    area: "hostel",
+    category: "electricity",
+    location: "Block A, Reading room",
+    studentName: "Farah Ali",
+    studentInitials: "FA",
+    createdAt: "16 Mar, 9:35 AM",
+    updatedAt: "16 Mar, 12:00 PM",
+    assignedStaff: network,
+    timeline: [
+      {
+        status: "reported",
+        at: "16 Mar, 9:35 AM",
+        note: "Complaint submitted by the student.",
+        actorName: "Farah Ali",
+      },
+      {
+        status: "assigned",
+        at: "16 Mar, 12:00 PM",
+        note: "Assigned to facilities.",
+        actorName: "Meera Iyer",
+      },
+    ],
+  },
+  {
+    id: "cmp-1005",
+    reference: "CMP-1005",
+    title: "Washroom door lock broken",
+    description:
+      "The latch on the washroom door does not close properly, so the door does not stay shut.",
+    status: "resolved",
+    priority: "medium",
+    area: "hostel",
+    category: "maintenance",
+    location: "Block D, Common washroom",
+    studentName: "Manav Joshi",
+    studentInitials: "MJ",
+    createdAt: "8 Mar, 8:40 AM",
+    updatedAt: "8 Mar, 3:10 PM",
+    assignedStaff: maintenance,
+    resolutionNote: "New latch mechanism fitted the same day.",
+    timeline: [
+      {
+        status: "reported",
+        at: "8 Mar, 8:40 AM",
+        note: "Complaint submitted by the student.",
+        actorName: "Manav Joshi",
+      },
+      {
+        status: "assigned",
+        at: "8 Mar, 9:15 AM",
+        note: "Assigned to maintenance.",
+        actorName: "Meera Iyer",
+      },
+      {
+        status: "in_progress",
+        at: "8 Mar, 11:00 AM",
+        note: "Latch inspected.",
+        actorName: "Rakesh Yadav",
+      },
+      {
+        status: "resolved",
+        at: "8 Mar, 3:10 PM",
+        note: "Repair completed.",
+        actorName: "Rakesh Yadav",
+      },
+    ],
+  },
+];
+
+/** Small helper so the security entry above reads clearly. */
+function securitySupervisor() {
+  return {
+    id: "stf-07",
+    name: "Prakash Bisht",
+    role: "Security Supervisor",
+    team: "Hostel Security",
+    initials: "PB",
+  };
+}
+
+/** All complaints belonging to the previewed student. */
+export const MOCK_STUDENT_COMPLAINTS = MOCK_COMPLAINTS.filter(
+  (complaint) => complaint.studentName === "Aarav Sharma",
+);
+
+/** All complaints routed to the previewed staff member. */
+export const MOCK_ASSIGNED_COMPLAINTS = MOCK_COMPLAINTS.filter(
+  (complaint) => complaint.assignedStaff?.id === MOCK_CURRENT_STAFF_ID,
+);
+
+export function findComplaint(id: string): Complaint | undefined {
+  return MOCK_COMPLAINTS.find((complaint) => complaint.id === id);
+}
+
+export function countByStatus(
+  complaints: Complaint[],
+  status: ComplaintStatus,
+): number {
+  return complaints.filter((complaint) => complaint.status === status).length;
+}
