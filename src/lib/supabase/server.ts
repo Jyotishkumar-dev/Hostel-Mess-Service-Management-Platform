@@ -1,4 +1,4 @@
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient as createSupabaseServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 /**
@@ -9,10 +9,10 @@ import { cookies } from "next/headers";
  * reading. Cookie writes only work inside a Server Action or Route Handler —
  * reading is enough for the pages built so far.
  */
-export async function createClient() {
+export async function createServerClient() {
   const cookieStore = await cookies();
 
-  return createServerClient(
+  return createSupabaseServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 

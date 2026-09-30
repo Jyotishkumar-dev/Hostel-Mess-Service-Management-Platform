@@ -14,6 +14,8 @@ export interface StatTile {
   value: number;
   /** Secondary line, e.g. "3 need attention". */
   hint: string;
+  /** Rendered after the number, e.g. "%" or " days". */
+  suffix?: string;
 }
 
 export interface ComplaintSummary {
@@ -101,6 +103,7 @@ export const MOCK_ADMIN_STATS: StatTile[] = [
     label: "Resolution rate",
     value: MOCK_CAMPUS_SUMMARY.resolutionRate,
     hint: "Share of issues closed",
+    suffix: "%",
   },
 ];
 

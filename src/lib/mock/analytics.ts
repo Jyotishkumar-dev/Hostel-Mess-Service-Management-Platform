@@ -1,4 +1,5 @@
 import type { ChartDatum } from "@/types";
+import type { ComplaintStatus } from "@/types/complaint";
 
 /**
  * ILLUSTRATIVE MOCK DATA — NOT REAL CAMPUS STATISTICS.
@@ -27,9 +28,13 @@ export const MOCK_ISSUES_OVER_TIME: ChartDatum[] = [
 ];
 
 /** Hostel vs mess split, stacked. */
-export const MOCK_AREAS_OVER_TIME: Array<
-  ChartDatum & { hostel: number; mess: number }
-> = [
+export interface AreaOverTimeDatum {
+  label: string;
+  hostel: number;
+  mess: number;
+}
+
+export const MOCK_AREAS_OVER_TIME: AreaOverTimeDatum[] = [
   { label: "Mar 10", hostel: 19, mess: 12 },
   { label: "Mar 11", hostel: 17, mess: 11 },
   { label: "Mar 12", hostel: 21, mess: 13 },
@@ -57,11 +62,11 @@ export const MOCK_BY_PRIORITY: ChartDatum[] = [
   { label: "Low", value: 26 },
 ];
 
-export const MOCK_BY_STATUS: ChartDatum[] = [
-  { label: "Reported", value: 31 },
-  { label: "Assigned", value: 29 },
-  { label: "In progress", value: 24 },
-  { label: "Resolved", value: 71 },
+export const MOCK_BY_STATUS: Array<ChartDatum & { status: ComplaintStatus }> = [
+  { label: "Reported", value: 31, status: "reported" },
+  { label: "Assigned", value: 29, status: "assigned" },
+  { label: "In progress", value: 24, status: "in_progress" },
+  { label: "Resolved", value: 71, status: "resolved" },
 ];
 
 /** Recurring issues — the same problem reported more than once. */
