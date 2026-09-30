@@ -90,14 +90,14 @@ export function ChartFrame({
   );
 }
 
-export function TrendAreaChart({
+export function TrendAreaChart<T extends object>({
   data,
   dataKey = "value",
   name = "Issues",
   color = "var(--color-chart-1)",
   height = 260,
 }: {
-  data: ReadonlyArray<Record<string, unknown>>;
+  data: readonly T[];
   dataKey?: string;
   name?: string;
   color?: string;
@@ -129,13 +129,13 @@ export function TrendAreaChart({
   );
 }
 
-export function StackedAreaChart({
+export function StackedAreaChart<T extends object>({
   data,
   series,
   height = 260,
 }: {
-  data: ReadonlyArray<Record<string, unknown>>;
-  series: ReadonlyArray<{ dataKey: string; name: string; color: string }>;
+  data: readonly T[];
+  series: readonly { dataKey: string; name: string; color: string }[];
   height?: number;
 }) {
   return (
@@ -170,13 +170,13 @@ export function StackedAreaChart({
   );
 }
 
-export function CategoryBarChart({
+export function CategoryBarChart<T extends object>({
   data,
   height = 280,
   horizontal = true,
   color = "var(--color-chart-1)",
 }: {
-  data: ReadonlyArray<Record<string, unknown>>;
+  data: readonly T[];
   height?: number;
   horizontal?: boolean;
   color?: string;
@@ -224,12 +224,12 @@ export function CategoryBarChart({
   );
 }
 
-export function StatusLineChart({
+export function StatusLineChart<T extends object>({
   data,
   height = 240,
   color = "var(--color-chart-2)",
 }: {
-  data: ReadonlyArray<Record<string, unknown>>;
+  data: readonly T[];
   height?: number;
   color?: string;
 }) {
@@ -254,11 +254,11 @@ export function StatusLineChart({
   );
 }
 
-export function DonutChart({
+export function DonutChart<T extends { label: string }>({
   data,
   height = 220,
 }: {
-  data: ReadonlyArray<Record<string, unknown>>;
+  data: readonly T[];
   height?: number;
 }) {
   return (
@@ -277,7 +277,7 @@ export function DonutChart({
         >
           {data.map((item, index) => (
             <Cell
-              key={String(item.label)}
+              key={item.label}
               fill={`var(--color-chart-${(index % 5) + 1})`}
             />
           ))}

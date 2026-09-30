@@ -13,8 +13,9 @@ import { StatCardRow } from "@/components/dashboard/stat-card";
 import { ComplaintCard } from "@/components/feedback/complaint-card";
 import { EmptyState } from "@/components/layout/empty-state";
 import { Button } from "@/components/ui/button";
-import { MOCK_ASSIGNED_COMPLAINTS, MOCK_SESSIONS } from "@/lib/mock";
+import { MOCK_ASSIGNED_COMPLAINTS } from "@/lib/mock";
 import { staffStats } from "@/lib/mock/statistics";
+import { MOCK_SESSIONS } from "@/config/navigation";
 
 export const metadata: Metadata = {
   title: "Staff Dashboard",

@@ -11,14 +11,11 @@ export function PageHeader({
   description,
   icon: Icon,
   actions,
-  children,
 }: {
   title: string;
   description: string;
   icon?: LucideIcon;
   actions?: React.ReactNode;
-  /** Optional secondary line below the actions, e.g. a data-source note. */
-  children?: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-4 border-b pb-5 sm:flex-row sm:items-start sm:justify-between">

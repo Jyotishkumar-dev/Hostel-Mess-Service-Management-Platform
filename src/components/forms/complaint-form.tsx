@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Building2, Info, Send, Utensils } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -37,10 +37,10 @@ export function ComplaintForm() {
   const [submitted, setSubmitted] = useState(false);
 
   const {
+    control,
     register,
     handleSubmit,
     setValue,
-    watch,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ComplaintDraftValues>({
@@ -48,8 +48,9 @@ export function ComplaintForm() {
     defaultValues: complaintDraftDefaults,
   });
 
-  const area = watch("area");
-  const category = watch("category");
+  // `useWatch` subscribes to single fields without subscribing the whole form.
+  const area = useWatch({ control, name: "area" });
+  const category = useWatch({ control, name: "category" });
 
   const onSubmit = async () => {
     // No database yet — Phase 2 replaces this with a Server Action.
