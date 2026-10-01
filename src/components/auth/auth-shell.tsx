@@ -21,7 +21,9 @@ export function AuthShell({
     <div className="min-h-dvh flex items-center justify-center px-4 py-12 bg-background">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <Brand className="justify-center" />
+          <div className="flex justify-center">
+            <Brand />
+          </div>
           <CardTitle className="mt-4">{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </CardHeader>

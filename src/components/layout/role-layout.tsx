@@ -1,5 +1,4 @@
 import { DashboardShell } from "@/components/layout/dashboard-shell";
-import type { Role } from "@/types";
 import type { AuthUser } from "@/types/auth";
 
 /**

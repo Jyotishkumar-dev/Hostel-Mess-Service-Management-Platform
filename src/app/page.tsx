@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { optionalUser, roleHome } from "@/lib/auth";
 import {
   ArrowRight,
@@ -77,19 +78,9 @@ const STAGES = [
 ];
 
 export default async function LandingPage() {
+  // A signed-in visitor has a dashboard — send them straight there.
   const user = await optionalUser();
-
-  // If signed in, send them straight to their dashboard
-  if (user) {
-    return (
-      <html lang="en">
-        <head>
-          <meta httpEquiv="refresh" content={`0;url=${roleHome(user.role)}`} />
-        </head>
-        <body>Redirecting…</body>
-      </html>
-    );
-  }
+  if (user) redirect(roleHome(user.role));
 
   return (
     <div className="flex min-h-dvh flex-col">

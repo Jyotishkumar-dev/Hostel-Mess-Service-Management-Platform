@@ -1,104 +1,128 @@
 "use server";
 
+import "server-only";
+
 import { redirect } from "next/navigation";
 import { createTypedServerClient } from "@/lib/supabase";
-import { mapLoginError, mapSignupError, mapLogoutError } from "@/lib/auth/errors";
-import type { AuthActionState, LoginValues, SignupValues, UserRole } from "@/types/auth";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { getAuthUser, roleHome } from "@/lib/auth/session";
+import { mapLoginError, mapSignupError } from "@/lib/auth/errors";
+import { loginSchema, signupSchema } from "@/lib/validations";
+import type { AuthActionState } from "@/types/auth";
 
-/** Build the role home path. */
-function roleHome(role: UserRole): string {
-  switch (role) {
-    case "admin":
-      return "/admin";
-    case "staff":
-      return "/staff";
-    case "student":
-    default:
-      return "/student";
+/**
+ * Authentication Server Actions.
+ *
+ * These run on the server only. Each one re-validates with the same Zod schema
+ * the form uses on the client, so the rules are defined exactly once.
+ *
+ * `redirect()` is deliberately called outside any try/catch — Next signals a
+ * redirect by throwing, so catching it would swallow the navigation.
+ *
+ * Note: in a `"use server"` file every export must be an async function.
+ */
+
+const NOT_CONFIGURED =
+  "Authentication is not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local.";
+
+/** Flatten a Zod error into `{ fieldName: firstMessage }`. */
+function fieldErrorsFrom(error: {
+  flatten(): { fieldErrors: Record<string, string[] | undefined> };
+}): Record<string, string> {
+  const result: Record<string, string> = {};
+
+  for (const [field, messages] of Object.entries(error.flatten().fieldErrors)) {
+    if (messages?.[0]) result[field] = messages[0];
   }
+
+  return result;
 }
 
 /**
- * Server action: Sign in with email and password.
- *
- * Uses the shared zod schema for server-side validation (defense in depth).
- * Returns fieldErrors for React Hook Form integration.
+ * Sign in with email and password, then send the user to the dashboard that
+ * matches their role in the database.
  */
-export async function signInAction(_prev: AuthActionState, formData: FormData): Promise<AuthActionState> {
-  const email = String(formData.get("email") ?? "").trim();
-  const password = String(formData.get("password") ?? "");
+export async function signInAction(
+  _previousState: AuthActionState,
+  formData: FormData,
+): Promise<AuthActionState> {
+  const parsed = loginSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
 
-  if (!email || !password) {
-    return { status: "error", message: "Email and password are required." };
+  if (!parsed.success) {
+    return { status: "error", fieldErrors: fieldErrorsFrom(parsed.error) };
+  }
+
+  if (!isSupabaseConfigured()) {
+    return { status: "error", message: NOT_CONFIGURED };
   }
 
   const supabase = await createTypedServerClient();
   if (!supabase) {
-    return { status: "error", message: "Authentication is not configured." };
+    return { status: "error", message: NOT_CONFIGURED };
   }
 
-  const { error, data } = await supabase.auth.signInWithPassword({ email, password });
+  const { error } = await supabase.auth.signInWithPassword(parsed.data);
 
   if (error) {
     return { status: "error", message: mapLoginError(error) };
   }
 
-  if (!data.user) {
-    return { status: "error", message: "Sign in failed. Please try again." };
+  // The redirect target comes from the same trusted lookup the dashboard
+  // guards use, so it can never be influenced by the client.
+  const user = await getAuthUser();
+
+  if (!user) {
+    return {
+      status: "error",
+      message: "Signed in, but your profile could not be loaded. Please try again.",
+    };
   }
 
-  // Fetch the profile to get the role
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", data.user.id)
-    .maybeSingle();
-
-  if (profileError || !profile) {
-    // Profile missing is unexpected but shouldn't block sign-in — redirect to student
-    redirect("/student");
-  }
-
-  redirect(roleHome(profile.role));
+  redirect(roleHome(user.role));
 }
 
 /**
- * Server action: Sign up a new student.
+ * Create a student account.
  *
- * The profile is created automatically by the database trigger (hardcoded role='student').
- * If email confirmation is required, the user is told to check their inbox.
+ * There is deliberately no `role` field here. The profile row is created by a
+ * database trigger that hardcodes `role = 'student'`, so nobody can promote
+ * themselves no matter what they send to this action.
  */
-export async function signUpAction(_prev: AuthActionState, formData: FormData): Promise<AuthActionState> {
-  const fullName = String(formData.get("fullName") ?? "").trim();
-  const email = String(formData.get("email") ?? "").trim();
-  const password = String(formData.get("password") ?? "");
-  const confirmPassword = String(formData.get("confirmPassword") ?? "");
+export async function signUpAction(
+  _previousState: AuthActionState,
+  formData: FormData,
+): Promise<AuthActionState> {
+  const parsed = signupSchema.safeParse({
+    fullName: formData.get("fullName"),
+    email: formData.get("email"),
+    password: formData.get("password"),
+    confirmPassword: formData.get("confirmPassword"),
+  });
 
-  // Basic server-side validation (mirrors client schema)
-  if (!fullName || fullName.length > 120) {
-    return { status: "error", fieldErrors: { fullName: "Full name is required (max 120 characters)." } };
+  if (!parsed.success) {
+    return { status: "error", fieldErrors: fieldErrorsFrom(parsed.error) };
   }
-  if (!email || !email.includes("@")) {
-    return { status: "error", fieldErrors: { email: "Enter a valid email address." } };
-  }
-  if (password.length < 8) {
-    return { status: "error", fieldErrors: { password: "Use at least 8 characters." } };
-  }
-  if (password !== confirmPassword) {
-    return { status: "error", fieldErrors: { confirmPassword: "Passwords do not match." } };
+
+  if (!isSupabaseConfigured()) {
+    return { status: "error", message: NOT_CONFIGURED };
   }
 
   const supabase = await createTypedServerClient();
   if (!supabase) {
-    return { status: "error", message: "Authentication is not configured." };
+    return { status: "error", message: NOT_CONFIGURED };
   }
 
-  const { error, data } = await supabase.auth.signUp({
+  const { fullName, email, password } = parsed.data;
+
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
+      // Read by the database trigger when it creates the profile row.
       data: { full_name: fullName },
-      emailRedirectTo: undefined, // use default Supabase email confirmation flow
     },
   });
 
@@ -106,43 +130,26 @@ export async function signUpAction(_prev: AuthActionState, formData: FormData): 
     return { status: "error", message: mapSignupError(error) };
   }
 
-  // If email confirmation is required, Supabase returns a user without a session
+  // With email confirmation enabled, Supabase returns a user but no session.
+  // Tell them to confirm rather than pretending they are signed in.
   if (data.user && !data.session) {
     return {
       status: "success",
-      message: "Account created! Please check your email to confirm your address, then sign in.",
+      message:
+        "Account created. Check your inbox to confirm your email address, then sign in.",
     };
   }
 
-  // If auto-confirmed (no email confirmation required in project settings), redirect by role
-  if (data.user) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", data.user.id)
-      .maybeSingle();
-
-    redirect(roleHome(profile?.role ?? "student"));
-  }
-
-  return { status: "success", message: "Account created. You can now sign in." };
+  // Email confirmation is disabled: sign them in and let the login flow place
+  // them on the right dashboard.
+  redirect("/login");
 }
 
-/**
- * Server action: Sign out the current user.
- */
+/** Sign out and return to the login screen. */
 export async function signOutAction(): Promise<void> {
-  const supabase = await createTypedServerClient();
-  if (!supabase) {
-    redirect("/login");
-  }
-
-  const { error } = await supabase.auth.signOut();
-
-  // Even if signOut fails, redirect to login — the session cookie is cleared client-side too
-  if (error) {
-    // Log server-side for debugging, but don't block the redirect
-    console.error("Sign out error:", mapLogoutError(error));
+  if (isSupabaseConfigured()) {
+    const supabase = await createTypedServerClient();
+    await supabase?.auth.signOut();
   }
 
   redirect("/login");

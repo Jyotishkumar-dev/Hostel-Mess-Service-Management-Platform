@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { useAuthUser } from "@/components/auth/user-context";
+import { requireUser } from "@/lib/auth";
 import {
   ArrowRight,
   CheckCircle2,
@@ -32,8 +32,9 @@ export const metadata: Metadata = {
   title: "Dashboard",
 };
 
-export default function StudentDashboardPage() {
-  const user = useAuthUser();
+export default async function StudentDashboardPage() {
+  // Deduplicated with the layout's check, so this costs no extra query.
+  const user = await requireUser();
   const recent = recentComplaints(MOCK_STUDENT_COMPLAINTS, 4);
 
   return (

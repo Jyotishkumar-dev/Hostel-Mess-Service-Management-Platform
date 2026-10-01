@@ -8,6 +8,7 @@ import {
   Timer,
 } from "lucide-react";
 import Link from "next/link";
+import { requireUser } from "@/lib/auth";
 import { PageHeader, SectionHeading } from "@/components/layout/page-header";
 import { StatCardRow } from "@/components/dashboard/stat-card";
 import { ComplaintCard } from "@/components/feedback/complaint-card";
@@ -15,14 +16,13 @@ import { EmptyState } from "@/components/layout/empty-state";
 import { Button } from "@/components/ui/button";
 import { MOCK_ASSIGNED_COMPLAINTS } from "@/lib/mock";
 import { staffStats } from "@/lib/mock/statistics";
-import { MOCK_SESSIONS } from "@/config/navigation";
 
 export const metadata: Metadata = {
   title: "Staff Dashboard",
 };
 
-export default function StaffDashboardPage() {
-  const user = MOCK_SESSIONS.staff;
+export default async function StaffDashboardPage() {
+  const user = await requireUser();
   const assigned = MOCK_ASSIGNED_COMPLAINTS;
 
   /** Sorted so the work that matters most is at the top. */
@@ -38,7 +38,7 @@ export default function StaffDashboardPage() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
-        title={`Your work, ${user.name.split(" ")[0]}`}
+        title={`Your work, ${user.fullName.split(" ")[0]}`}
         description="Assigned issues for the maintenance team, most urgent first."
         actions={
           <Button asChild variant="outline">

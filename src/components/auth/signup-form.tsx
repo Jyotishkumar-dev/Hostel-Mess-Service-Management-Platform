@@ -1,211 +1,209 @@
 "use client";
 
-import { useActionState, useTransition } from "react";
+import { useActionState, useEffect, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Mail, Lock, User } from "lucide-react";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { Loader2, Lock, Mail, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthShell } from "@/components/auth/auth-shell";
-import { signUpAction } from "@/lib/auth";
-import { signupSchema, signupDefaults, type SignupValues } from "@/lib/validations";
+import { AuthAlert } from "@/components/auth/auth-alert";
+import { signUpAction } from "@/lib/auth/actions";
+import {
+  signupSchema,
+  signupDefaults,
+  type SignupValues,
+} from "@/lib/validations";
+import type { AuthActionState } from "@/types/auth";
+
+const INITIAL_STATE: AuthActionState = { status: "idle" };
 
 /**
- * Signup form using React Hook Form + Zod + Server Action.
+ * Signup form.
  *
- * The Server Action validates with the same schema.
- * On success, the user is either redirected (if auto-confirmed) or
- * shown a "check your email" message.
+ * There is no role selector here on purpose: every public signup creates a
+ * student. Admin and staff roles are granted through controlled database
+ * operations, so the form cannot be used to escalate privileges.
  */
 export function SignupForm() {
-  const [state, formAction, isPending] = useActionState(signUpAction, {
-    status: "idle",
-  });
+  const [state, formAction, isPending] = useActionState(
+    signUpAction,
+    INITIAL_STATE,
+  );
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
     setError,
-    reset,
+    formState: { errors },
   } = useForm<SignupValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: signupDefaults,
-    mode: "onSubmit",
   });
 
   const [, startTransition] = useTransition();
 
-  const onSubmit = handleSubmit((values) => {
-    const fd = new FormData();
-    fd.set("fullName", values.fullName);
-    fd.set("email", values.email);
-    fd.set("password", values.password);
-    fd.set("confirmPassword", values.confirmPassword);
-    startTransition(() => {
-      formAction(fd);
-    });
-  });
-
-  // Map server-side fieldErrors back to RHF
-  if (state.fieldErrors) {
-    for (const [field, message] of Object.entries(state.fieldErrors)) {
-      if (field in signupDefaults) {
-        setError(field as keyof SignupValues, { type: "server", message });
-      }
+  useEffect(() => {
+    for (const [field, message] of Object.entries(state.fieldErrors ?? {})) {
+      setError(field as keyof SignupValues, { type: "server", message });
     }
-  }
+  }, [state, setError]);
+
+  const onSubmit = handleSubmit((values) => {
+    const payload = new FormData();
+    payload.set("fullName", values.fullName);
+    payload.set("email", values.email);
+    payload.set("password", values.password);
+    payload.set("confirmPassword", values.confirmPassword);
+
+    startTransition(() => formAction(payload));
+  });
 
   return (
     <AuthShell
-      title="Create account"
-      description="Sign up to report issues and track their resolution."
+      title="Create your account"
+      description="Report hostel and mess issues and follow them through to a fix."
       footer={
-        <p className="text-sm text-center text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Already have an account?{" "}
-          <a href="/login" className="underline hover:text-foreground">
+          <Link href="/login" className="font-medium underline hover:text-foreground">
             Sign in
-          </a>
+          </Link>
         </p>
       }
     >
-      <form onSubmit={onSubmit} className="space-y-4" noValidate>
-        {state.status === "error" && (
-          <div
-            className={cn(
-              "rounded-lg border bg-destructive/10 p-3 text-sm text-destructive",
-              "animate-in fade-in-0"
-            )}
-            role="alert"
-          >
-            {state.message}
-          </div>
-        )}
+      <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
+        {state.status === "error" && state.message ? (
+          <AuthAlert tone="error">{state.message}</AuthAlert>
+        ) : null}
 
-        {state.status === "success" && !isPending && (
-          <div
-            className={cn(
-              "rounded-lg border bg-status-resolved-bg/20 p-3 text-sm text-status-resolved-fg",
-              "animate-in fade-in-0"
-            )}
-            role="status"
-          >
-            {state.message}
-          </div>
-        )}
+        {state.status === "success" && state.message ? (
+          <AuthAlert tone="info">{state.message}</AuthAlert>
+        ) : null}
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="fullName">Full name</Label>
           <div className="relative">
-            <User className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" aria-hidden="true" />
+            <User
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
             <Input
               id="fullName"
               type="text"
+              autoComplete="name"
               placeholder="Aarav Sharma"
               className="pl-10"
-              autoComplete="name"
               aria-invalid={!!errors.fullName}
               aria-describedby={errors.fullName ? "fullName-error" : undefined}
               disabled={isPending}
               {...register("fullName")}
             />
           </div>
-          {errors.fullName && (
-            <p id="fullName-error" className="text-sm text-destructive" role="alert">
+          {errors.fullName ? (
+            <p id="fullName-error" className="text-sm text-destructive">
               {errors.fullName.message}
             </p>
-          )}
+          ) : null}
         </div>
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="email">Email</Label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" aria-hidden="true" />
+            <Mail
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
             <Input
               id="email"
               type="email"
+              autoComplete="email"
               placeholder="you@university.edu"
               className="pl-10"
-              autoComplete="email"
               aria-invalid={!!errors.email}
               aria-describedby={errors.email ? "email-error" : undefined}
               disabled={isPending}
               {...register("email")}
             />
           </div>
-          {errors.email && (
-            <p id="email-error" className="text-sm text-destructive" role="alert">
+          {errors.email ? (
+            <p id="email-error" className="text-sm text-destructive">
               {errors.email.message}
             </p>
-          )}
+          ) : null}
         </div>
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="password">Password</Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" aria-hidden="true" />
+            <Lock
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
             <Input
               id="password"
               type="password"
-              placeholder="••••••••"
-              className="pl-10"
               autoComplete="new-password"
+              placeholder="At least 8 characters"
+              className="pl-10"
               aria-invalid={!!errors.password}
               aria-describedby={errors.password ? "password-error" : undefined}
               disabled={isPending}
               {...register("password")}
             />
           </div>
-          {errors.password && (
-            <p id="password-error" className="text-sm text-destructive" role="alert">
+          {errors.password ? (
+            <p id="password-error" className="text-sm text-destructive">
               {errors.password.message}
             </p>
-          )}
+          ) : null}
         </div>
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="confirmPassword">Confirm password</Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" aria-hidden="true" />
+            <Lock
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
             <Input
               id="confirmPassword"
               type="password"
-              placeholder="••••••••"
-              className="pl-10"
               autoComplete="new-password"
+              placeholder="Re-enter your password"
+              className="pl-10"
               aria-invalid={!!errors.confirmPassword}
-              aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
+              aria-describedby={
+                errors.confirmPassword ? "confirmPassword-error" : undefined
+              }
               disabled={isPending}
               {...register("confirmPassword")}
             />
           </div>
-          {errors.confirmPassword && (
-            <p id="confirmPassword-error" className="text-sm text-destructive" role="alert">
+          {errors.confirmPassword ? (
+            <p id="confirmPassword-error" className="text-sm text-destructive">
               {errors.confirmPassword.message}
             </p>
-          )}
+          ) : null}
         </div>
 
-        <Button type="submit" className="w-full" size="lg" disabled={isPending}>
+        <p className="text-xs text-muted-foreground">
+          New accounts are created with the student role. Staff and admin access
+          is granted by the campus services team.
+        </p>
+
+        <Button type="submit" size="lg" disabled={isPending} className="w-full">
           {isPending ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+              <Loader2 className="animate-spin" aria-hidden="true" />
               Creating account…
             </>
           ) : (
             "Create account"
           )}
         </Button>
-
-        <p className="text-xs text-center text-muted-foreground">
-          By creating an account you agree to our{" "}
-          <a href="#" className="underline hover:text-foreground">Terms of Service</a>
-          {" and "}
-          <a href="#" className="underline hover:text-foreground">Privacy Policy</a>
-          .
-        </p>
       </form>
     </AuthShell>
   );

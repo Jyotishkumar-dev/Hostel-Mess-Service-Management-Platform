@@ -1,8 +1,8 @@
 "use client";
 
-import { signOutAction } from "@/lib/auth";
-import { LogOut, User } from "lucide-react";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { LogOut } from "lucide-react";
+import { signOutAction } from "@/lib/auth/actions";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,11 +15,14 @@ import {
 import type { AuthUser } from "@/types/auth";
 
 /**
- * User menu dropdown in the topbar.
+ * Account menu in the topbar.
  *
- * Shows the user's name, email, role, and a sign-out button.
+ * Sign-out is a real form posting to a Server Action, so it works even before
+ * hydration and never depends on client-side state.
  */
 export function UserMenu({ user }: { user: AuthUser }) {
+  const roleLabel = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -32,34 +35,40 @@ export function UserMenu({ user }: { user: AuthUser }) {
             {user.initials}
           </span>
           <span className="hidden text-left sm:block">
-            <span className="block text-xs font-medium leading-tight">
+            <span className="block max-w-32 truncate text-xs leading-tight font-medium">
               {user.fullName}
             </span>
             <span className="block text-[11px] leading-tight text-muted-foreground">
-              {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+              {roleLabel}
             </span>
           </span>
         </Button>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent align="end" className="w-64">
         <DropdownMenuLabel className="font-normal">
           <p className="text-sm font-medium">{user.fullName}</p>
           <p className="truncate text-xs text-muted-foreground">{user.email}</p>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+
         <DropdownMenuItem asChild>
-          <form action={signOutAction}>
-            <Button
+          <Link href="/" className="justify-start gap-2">
+            Campus Resolve home
+          </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem asChild>
+          <form action={signOutAction} className="w-full">
+            <button
               type="submit"
-              variant="ghost"
-              className={cn(
-                "w-full justify-start gap-2",
-                "focus:bg-accent focus:text-accent-foreground"
-              )}
+              className="flex w-full cursor-default items-center gap-2 text-sm outline-none select-none"
             >
-              <LogOut className="size-4" aria-hidden="true" />
+              <LogOut aria-hidden="true" />
               Sign out
-            </Button>
+            </button>
           </form>
         </DropdownMenuItem>
       </DropdownMenuContent>

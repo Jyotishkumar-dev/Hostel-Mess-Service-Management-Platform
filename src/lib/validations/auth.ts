@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { requiredParagraph, requiredText } from "@/lib/validations/common";
+import { requiredText } from "@/lib/validations/common";
 
 /**
  * Zod schemas for authentication forms.

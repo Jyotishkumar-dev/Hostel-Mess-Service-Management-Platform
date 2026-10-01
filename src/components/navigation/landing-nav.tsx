@@ -32,11 +32,11 @@ export function LandingNav() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2 md:ml-0">
-          <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-            <Link href="/student">Student</Link>
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/login">Sign in</Link>
           </Button>
           <Button asChild size="sm">
-            <Link href="/admin">Open dashboard</Link>
+            <Link href="/signup">Get started</Link>
           </Button>
         </div>
       </div>
@@ -44,7 +44,6 @@ export function LandingNav() {
   );
 }
 
-/** Footer with the three role entry points. */
 export function LandingFooter() {
   return (
     <footer className="border-t bg-muted/30">
@@ -59,31 +58,23 @@ export function LandingFooter() {
 
           <div>
             <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              Portals
+              Get started
             </p>
             <ul className="mt-3 space-y-2 text-sm">
               <li>
                 <Link
-                  href="/student"
+                  href="/signup"
                   className="text-muted-foreground hover:text-foreground"
                 >
-                  Student dashboard
+                  Create an account
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/admin"
+                  href="/login"
                   className="text-muted-foreground hover:text-foreground"
                 >
-                  Admin dashboard
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/staff"
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  Staff dashboard
+                  Sign in
                 </Link>
               </li>
             </ul>
@@ -91,8 +82,8 @@ export function LandingFooter() {
         </div>
 
         <p className="mt-10 border-t pt-6 text-xs text-muted-foreground">
-          Phase 1 interface build. Sample records are illustrative and do not
-          represent real campus data.
+          Phase 2 build. Records shown in the dashboards are illustrative sample
+          data, not real campus data.
         </p>
       </div>
     </footer>

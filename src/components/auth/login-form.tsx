@@ -1,141 +1,135 @@
 "use client";
 
-import { useActionState, useTransition } from "react";
-import { useForm, useFormState } from "react-hook-form";
+import { useActionState, useEffect, useTransition } from "react";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Mail, Lock } from "lucide-react";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { Loader2, Lock, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthShell } from "@/components/auth/auth-shell";
-import { signInAction } from "@/lib/auth";
+import { AuthAlert } from "@/components/auth/auth-alert";
+import { signInAction } from "@/lib/auth/actions";
 import { loginSchema, loginDefaults, type LoginValues } from "@/lib/validations";
+import type { AuthActionState } from "@/types/auth";
+
+const INITIAL_STATE: AuthActionState = { status: "idle" };
 
 /**
- * Login form using React Hook Form + Zod + Server Action.
+ * Login form.
  *
- * Validation happens on the client via RHF; the Server Action re-validates
- * using the same schema (defense in depth, no duplication).
+ * React Hook Form owns field validation and input state; the Server Action
+ * owns authentication. The action returns field-level errors, which are pushed
+ * back into React Hook Form so both layers stay in agreement.
  */
 export function LoginForm() {
-  const [state, formAction, isPending] = useActionState(signInAction, {
-    status: "idle",
-  });
+  const [state, formAction, isPending] = useActionState(
+    signInAction,
+    INITIAL_STATE,
+  );
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
     setError,
-    reset,
+    formState: { errors },
   } = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: loginDefaults,
-    mode: "onSubmit",
   });
 
   const [, startTransition] = useTransition();
 
-  const onSubmit = handleSubmit((values) => {
-    const fd = new FormData();
-    fd.set("email", values.email);
-    fd.set("password", values.password);
-    startTransition(() => {
-      formAction(fd);
-    });
-  });
-
-  // Map server-side fieldErrors back to RHF
-  if (state.fieldErrors) {
-    for (const [field, message] of Object.entries(state.fieldErrors)) {
-      if (field in loginDefaults) {
-        setError(field as keyof LoginValues, { type: "server", message });
-      }
+  // Server-side validation runs last, so its errors land after render.
+  useEffect(() => {
+    for (const [field, message] of Object.entries(state.fieldErrors ?? {})) {
+      setError(field as keyof LoginValues, { type: "server", message });
     }
-  }
+  }, [state, setError]);
+
+  const onSubmit = handleSubmit((values) => {
+    const payload = new FormData();
+    payload.set("email", values.email);
+    payload.set("password", values.password);
+
+    startTransition(() => formAction(payload));
+  });
 
   return (
     <AuthShell
       title="Sign in"
-      description="Enter your credentials to access your dashboard."
+      description="Enter your credentials to open your dashboard."
       footer={
-        <p className="text-sm text-center text-muted-foreground">
-          Don't have an account?{" "}
-          <a href="/signup" className="underline hover:text-foreground">
+        <p className="text-sm text-muted-foreground">
+          Don&apos;t have an account?{" "}
+          <Link href="/signup" className="font-medium underline hover:text-foreground">
             Create one
-          </a>
+          </Link>
         </p>
       }
     >
-      <form onSubmit={onSubmit} className="space-y-4" noValidate>
-        {state.status === "error" && (
-          <div
-            className={cn(
-              "rounded-lg border bg-destructive/10 p-3 text-sm text-destructive",
-              "animate-in fade-in-0"
-            )}
-            role="alert"
-          >
-            {state.message}
-          </div>
-        )}
+      <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
+        {state.status === "error" && state.message ? (
+          <AuthAlert tone="error">{state.message}</AuthAlert>
+        ) : null}
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="email">Email</Label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" aria-hidden="true" />
+            <Mail
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
             <Input
               id="email"
               type="email"
+              autoComplete="email"
               placeholder="you@university.edu"
               className="pl-10"
-              autoComplete="email"
               aria-invalid={!!errors.email}
               aria-describedby={errors.email ? "email-error" : undefined}
               disabled={isPending}
               {...register("email")}
             />
           </div>
-          {errors.email && (
-            <p id="email-error" className="text-sm text-destructive" role="alert">
+          {errors.email ? (
+            <p id="email-error" className="text-sm text-destructive">
               {errors.email.message}
             </p>
-          )}
+          ) : null}
         </div>
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
-            <a href="#" className="text-xs text-muted-foreground hover:text-foreground underline">
-              Forgot password?
-            </a>
-          </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="password">Password</Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" aria-hidden="true" />
+            <Lock
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
             <Input
               id="password"
               type="password"
+              autoComplete="current-password"
               placeholder="••••••••"
               className="pl-10"
-              autoComplete="current-password"
               aria-invalid={!!errors.password}
               aria-describedby={errors.password ? "password-error" : undefined}
               disabled={isPending}
               {...register("password")}
             />
           </div>
-          {errors.password && (
-            <p id="password-error" className="text-sm text-destructive" role="alert">
+          {errors.password ? (
+            <p id="password-error" className="text-sm text-destructive">
               {errors.password.message}
             </p>
-          )}
+          ) : null}
         </div>
 
-        <Button type="submit" className="w-full" size="lg" disabled={isPending}>
+        <Button type="submit" size="lg" disabled={isPending} className="mt-1 w-full">
           {isPending ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+              <Loader2 className="animate-spin" aria-hidden="true" />
               Signing in…
             </>
           ) : (
