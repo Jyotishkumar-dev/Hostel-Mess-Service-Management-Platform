@@ -106,6 +106,7 @@ export default function AdminDashboardPage() {
               <ComplaintTable
                 complaints={NEEDS_TRIAGE}
                 caption="Issues awaiting triage"
+                basePath="/admin/issues"
                 showStudent
               />
             )}

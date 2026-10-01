@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { ArrowLeft, FileText, History, MapPin, UserRound } from "lucide-react";
+import {
+  ArrowLeft,
+  FileText,
+  History,
+  Image as ImageIcon,
+  MapPin,
+  UserRound,
+} from "lucide-react";
 import { AREA_LABELS, CATEGORY_LABELS } from "@/config/status";
 import { PriorityBadge, StatusBadge } from "@/components/feedback/status-badges";
 import { ComplaintTimeline, NEXT_STEP_HINT } from "@/components/feedback/complaint-timeline";
@@ -94,6 +101,18 @@ export function ComplaintDetail({
           ) : null}
 
           <DetailSection
+            icon={ImageIcon}
+            title="Photo evidence"
+            description={
+              complaint.imageUrl
+                ? "Attached when you submitted this feedback."
+                : "No photo was attached to this complaint."
+            }
+          >
+            <ComplaintImage imageUrl={complaint.imageUrl} />
+          </DetailSection>
+
+          <DetailSection
             icon={History}
             title="Progress"
             description="Every status change, in order."
@@ -139,5 +158,43 @@ export function ComplaintDetail({
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * Renders the complaint photo, or explains its absence.
+ *
+ * The bucket is private, so `imageUrl` is a signed URL that expires after ten
+ * minutes. A plain <img> is used deliberately: the URL is a short-lived blob
+ * endpoint, so `next/image` optimisation would only add a hop and a failure
+ * mode for no benefit.
+ */
+function ComplaintImage({ imageUrl }: { imageUrl: string | null }) {
+  if (!imageUrl) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        You did not attach a photo to this report. Adding one on a future report
+        usually speeds up the first visit.
+      </p>
+    );
+  }
+
+  return (
+    <a
+      href={imageUrl}
+      target="_blank"
+      rel="noreferrer"
+      className="group block overflow-hidden rounded-xl border bg-muted/30 focus-visible:ring-ring focus-visible:ring-2"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={imageUrl}
+        alt="Photo attached to this complaint"
+        className="max-h-96 w-full object-contain transition-opacity group-hover:opacity-95"
+      />
+      <span className="block border-t px-3 py-2 text-xs text-muted-foreground">
+        Tap to open full size
+      </span>
+    </a>
   );
 }

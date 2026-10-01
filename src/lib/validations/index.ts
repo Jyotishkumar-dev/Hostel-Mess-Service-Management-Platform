@@ -7,4 +7,5 @@
  */
 export * from "@/lib/validations/common";
 export * from "@/lib/validations/complaint";
+export * from "@/lib/validations/image";
 export * from "@/lib/validations/auth";

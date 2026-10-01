@@ -26,6 +26,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
   {
     id: "cmp-1041",
     reference: "CMP-1041",
+    imageUrl: null,
     title: "Charging point in the reading room is broken",
     description:
       "Only one of the six sockets in the reading room works. The rest have no power at all.",
@@ -57,6 +58,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
   {
     id: "cmp-1035",
     reference: "CMP-1035",
+    imageUrl: null,
     title: "Mess gate closes early during exams",
     description:
       "During the exam period the mess closes at 8 PM instead of 9:30 PM, which leaves no time to eat after a late paper.",
@@ -82,6 +84,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
   {
     id: "cmp-1038",
     reference: "CMP-1038",
+    imageUrl: null,
     title: "Mess serving counter queue is badly managed",
     description:
       "At peak lunch hours the queue at the serving counter spills into the dining area. Students are skipping meals because of the wait.",
@@ -121,6 +124,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
   {
     id: "cmp-1029",
     reference: "CMP-1029",
+    imageUrl: null,
     title: "Unauthorised entry through the back gate",
     description:
       "The back gate of the hostel block is often left unlocked at night. This was reported twice in the same week.",
@@ -158,13 +162,14 @@ export const MOCK_COMPLAINTS: Complaint[] = [
   {
     id: "cmp-1031",
     reference: "CMP-1031",
+    imageUrl: null,
     title: "Food served with a foreign object in the bowl",
     description:
       "A piece of plastic was found in the dal at dinner. The mess staff were informed immediately but nothing has changed since.",
     status: "in_progress",
     priority: "critical",
     area: "mess",
-    category: "food_hygiene",
+    category: "hygiene",
     location: "Mess 1, Kitchen entrance",
     studentName: "Rohan Verma",
     studentInitials: "RV",
@@ -197,6 +202,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
   {
     id: "cmp-1027",
     reference: "CMP-1027",
+    imageUrl: null,
     title: "Wi-Fi drops every evening around 7 PM",
     description:
       "The hostel Wi-Fi becomes unusable between 7 and 9 PM when everyone is back and streaming. Speed tests drop to almost nothing during that window.",
@@ -222,6 +228,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
   {
     id: "cmp-1023",
     reference: "CMP-1023",
+    imageUrl: null,
     title: "Mess food served cold during lunch",
     description:
       "For the past week the roti and sabzi have been reaching the dining hall cold by the time we sit down. The same is true for the curry rotation on weekends.",
@@ -253,6 +260,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
   {
     id: "cmp-1018",
     reference: "CMP-1018",
+    imageUrl: null,
     title: "No running water on the second floor",
     description:
       "There has been no water supply in the washrooms on the second floor since Monday morning. Around forty students are affected and we are carrying buckets from the ground floor.",
@@ -292,13 +300,14 @@ export const MOCK_COMPLAINTS: Complaint[] = [
   {
     id: "cmp-1014",
     reference: "CMP-1014",
+    imageUrl: null,
     title: "Washroom not cleaned for three days",
     description:
       "The washroom near the study hall has not been cleaned since the weekend. There is a strong smell and the bins have not been emptied.",
     status: "reopened",
     priority: "high",
     area: "hostel",
-    category: "cleanliness",
+    category: "cleaning",
     location: "Block C, Ground floor washroom",
     studentName: "Aarav Sharma",
     studentInitials: "AS",
@@ -343,6 +352,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
   {
     id: "cmp-1009",
     reference: "CMP-1009",
+    imageUrl: null,
     title: "Corridor light flickering outside room 214",
     description:
       "The light outside room 214 flickers continuously and goes off for a few seconds. It is dark at night and feels unsafe walking back.",
@@ -388,13 +398,14 @@ export const MOCK_COMPLAINTS: Complaint[] = [
   {
     id: "cmp-1005",
     reference: "CMP-1005",
+    imageUrl: null,
     title: "Washroom door lock broken",
     description:
       "The latch on the washroom door does not close properly, so the door does not stay shut.",
     status: "resolved",
     priority: "medium",
     area: "hostel",
-    category: "maintenance",
+    category: "room_maintenance",
     location: "Block D, Common washroom",
     studentName: "Manav Joshi",
     studentInitials: "MJ",
@@ -432,13 +443,14 @@ export const MOCK_COMPLAINTS: Complaint[] = [
   {
     id: "cmp-1002",
     reference: "CMP-1002",
+    imageUrl: null,
     title: "Ceiling fan stopped working in study room",
     description:
       "The fan in the second-floor study room has not turned on since last week. The room gets very warm in the afternoon.",
     status: "resolved",
     priority: "low",
     area: "hostel",
-    category: "maintenance",
+    category: "room_maintenance",
     location: "Block B, Second floor study room",
     studentName: "Neha Gupta",
     studentInitials: "NG",

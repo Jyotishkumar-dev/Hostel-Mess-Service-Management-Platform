@@ -67,6 +67,7 @@ export function ComplaintList({
         <ComplaintTable
           complaints={complaints}
           caption="Reported issues"
+          basePath={basePath}
           showStudent={showStudent}
         />
       </div>

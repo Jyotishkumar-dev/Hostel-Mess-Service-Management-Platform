@@ -54,7 +54,7 @@ export function DashboardShell({
           </p>
           <SidebarNav role={role} />
         </div>
-        <PhaseNote />
+        <PhaseNote role={role} />
       </aside>
 
       {/* Content column */}
@@ -95,7 +95,7 @@ export function DashboardShell({
                 <SidebarNavDetailed role={role} />
               </div>
             </div>
-            <PhaseNote />
+            <PhaseNote role={role} />
           </SheetContent>
         </Sheet>
 
@@ -108,18 +108,25 @@ export function DashboardShell({
 }
 
 /**
- * A quiet, permanent reminder that the current build is a UI shell. It appears
- * in every portal so no screenshot or demo frame can be mistaken for live data.
+ * A quiet reminder about where each portal's data comes from.
+ *
+ * The student portal reads live Supabase rows from Phase 3 onwards, so saying
+ * "sample data" there would be wrong. The admin and staff portals still render
+ * mock records until their phases land, and this keeps that honest rather than
+ * letting a demo frame be mistaken for a live queue.
  */
-function PhaseNote({ className }: { className?: string }) {
+function PhaseNote({ role }: { role: Role }) {
+  const isStudent = role === "student";
+
   return (
     <p
       className={cn(
         "border-t border-sidebar-border px-4 py-3.5 text-[11px] leading-relaxed text-muted-foreground",
-        className,
       )}
     >
-      Phase 1 preview. Records shown are sample data, not live campus issues.
+      {isStudent
+        ? "Your feedback is stored privately and is visible only to you and the staff handling it."
+        : "Phase 1 preview. Records shown are sample data, not live campus issues."}
     </p>
   );
 }

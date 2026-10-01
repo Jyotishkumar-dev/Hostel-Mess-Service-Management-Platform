@@ -13,14 +13,23 @@ import { PriorityBadge, StatusBadge } from "@/components/feedback/status-badges"
 import { AREA_LABELS, CATEGORY_LABELS } from "@/config/status";
 import type { Complaint } from "@/types/complaint";
 
-/** Columns shown on the admin issue register. */
+/**
+ * Columns shown on a complaint register.
+ *
+ * `basePath` decides where the title links to, so the same table serves the
+ * student list (`/student/complaints`), the admin register (`/admin/issues`)
+ * and the staff worklist (`/staff/issues`) without duplicating the markup.
+ */
 export function ComplaintTable({
   complaints,
   caption,
+  basePath,
   showStudent = false,
 }: {
   complaints: Complaint[];
   caption: string;
+  /** Route prefix links are built from, e.g. "/student/complaints". */
+  basePath: string;
   showStudent?: boolean;
 }) {
   return (
@@ -46,7 +55,7 @@ export function ComplaintTable({
               </TableCell>
               <TableCell className="max-w-[22rem]">
                 <Link
-                  href={`/admin/issues/${complaint.id}`}
+                  href={`${basePath}/${complaint.id}`}
                   className="block truncate font-medium hover:underline"
                 >
                   {complaint.title}

@@ -1,9 +1,9 @@
 /**
  * Core domain types.
  *
- * These mirror the shape of the PostgreSQL tables that will be created in a
- * later phase. They are plain TypeScript only — no runtime behaviour — so they
- * can be imported from both server and client components.
+ * These mirror the shape of the PostgreSQL tables created in Phase 3. They are
+ * plain TypeScript only — no runtime behaviour — so they can be imported from
+ * both server and client components.
  */
 
 export const COMPLAINT_STATUSES = [
@@ -30,19 +30,93 @@ export const SERVICE_AREAS = ["hostel", "mess"] as const;
 
 export type ServiceArea = (typeof SERVICE_AREAS)[number];
 
-export const COMPLAINT_CATEGORIES = [
+/**
+ * Categories are split per service area, because the issues a student reports
+ * in a hostel and in a dining hall have nothing in common.
+ *
+ * `other` is deliberately shared: it is the one category that makes sense on
+ * both sides, so a student is never forced into a wrong bucket just because
+ * their issue did not fit.
+ */
+export const HOSTEL_CATEGORIES = [
   "water",
   "electricity",
-  "cleanliness",
-  "food_quality",
-  "food_hygiene",
-  "maintenance",
-  "security",
   "internet",
+  "cleaning",
+  "room_maintenance",
+  "furniture",
+  "washroom",
+  "security",
+  "laundry",
+  "common_area",
   "other",
 ] as const;
 
-export type ComplaintCategory = (typeof COMPLAINT_CATEGORIES)[number];
+export const MESS_CATEGORIES = [
+  "food_quality",
+  "taste",
+  "hygiene",
+  "quantity",
+  "menu",
+  "timing",
+  "variety",
+  "cleanliness",
+  "staff_service",
+  "other",
+] as const;
+
+/** Every category the database accepts, for type-safe iteration. */
+export const COMPLAINT_CATEGORIES = [
+  ...new Set([...HOSTEL_CATEGORIES, ...MESS_CATEGORIES]),
+] as readonly ComplaintCategory[];
+
+export type HostelCategory = (typeof HOSTEL_CATEGORIES)[number];
+export type MessCategory = (typeof MESS_CATEGORIES)[number];
+export type ComplaintCategory = HostelCategory | MessCategory;
+
+/** The categories valid for one service area. */
+export function categoriesForArea(area: ServiceArea): readonly ComplaintCategory[] {
+  return area === "hostel" ? HOSTEL_CATEGORIES : MESS_CATEGORIES;
+}
+
+/** True when `category` is a valid choice for `area`. */
+export function isCategoryForArea(
+  area: ServiceArea,
+  category: ComplaintCategory,
+): boolean {
+  return (categoriesForArea(area) as readonly string[]).includes(category);
+}
+
+/**
+ * Suggested location values shown under the location input, per service area.
+ * These are hints to help students write a useful location — the field itself
+ * stays free text, because every campus names its spaces differently.
+ */
+export const AREA_LOCATION_SUGGESTIONS: Record<ServiceArea, readonly string[]> = {
+  hostel: [
+    "Block A",
+    "Block B",
+    "Block C",
+    "Common room",
+    "Reading room",
+    "Ground floor",
+    "First floor",
+    "Second floor",
+    "Third floor",
+    "Washroom",
+    "Corridor",
+    "Gate",
+  ],
+  mess: [
+    "Main Mess",
+    "Block Mess",
+    "Dining Hall",
+    "Kitchen",
+    "Serving Counter",
+    "Common Mess",
+    "Other",
+  ],
+};
 
 /** A member of hostel or mess support staff. */
 export interface StaffMember {
@@ -55,7 +129,7 @@ export interface StaffMember {
 
 export interface StatusChange {
   status: ComplaintStatus;
-  /** Human readable, mock timestamp. */
+  /** Pre-formatted for display, e.g. "16 Mar, 9:35 AM". */
   at: string;
   note: string;
   actorName: string;
@@ -63,7 +137,7 @@ export interface StatusChange {
 
 export interface Complaint {
   id: string;
-  /** Short human reference, e.g. "CMP-2417". */
+  /** Short human reference, e.g. "CMP-1041". */
   reference: string;
   title: string;
   description: string;
@@ -80,6 +154,11 @@ export interface Complaint {
   assignedStaff: StaffMember | null;
   /** Present once work has started. */
   resolutionNote?: string;
-  /** Mock stage markers shown on the detail page timeline. */
+  /**
+   * Short-lived signed URL for the uploaded photo, resolved server-side.
+   * Null when the complaint has no photo or the file could not be signed.
+   */
+  imageUrl: string | null;
+  /** Real status history, read from `complaint_events`. */
   timeline: StatusChange[];
 }

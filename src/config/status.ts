@@ -12,6 +12,7 @@ import type {
   ComplaintStatus,
   ServiceArea,
 } from "@/types/complaint";
+import { categoriesForArea } from "@/types/complaint";
 
 /**
  * The single source of truth for how a status or priority looks.
@@ -108,17 +109,48 @@ export const AREA_LABELS: Record<ServiceArea, string> = {
 };
 
 export const CATEGORY_LABELS: Record<ComplaintCategory, string> = {
+  // hostel
   water: "Water supply",
   electricity: "Electricity",
-  cleanliness: "Cleanliness",
-  food_quality: "Food quality",
-  food_hygiene: "Food hygiene",
-  maintenance: "Maintenance",
+  internet: "Wi-Fi",
+  cleaning: "Cleaning",
+  room_maintenance: "Room maintenance",
+  furniture: "Furniture",
+  washroom: "Washroom",
   security: "Security",
-  internet: "Internet",
+  laundry: "Laundry",
+  common_area: "Common area",
+  // mess
+  food_quality: "Food quality",
+  taste: "Taste",
+  hygiene: "Hygiene",
+  quantity: "Quantity",
+  menu: "Menu",
+  timing: "Meal timing",
+  variety: "Variety",
+  cleanliness: "Cleanliness",
+  staff_service: "Staff service",
+  // either
   other: "Other",
 };
 
+/**
+ * Short helper used by the category picker and any filter that is scoped to a
+ * single service area.
+ */
+export function categoryOptionsFor(area: ServiceArea) {
+  return categoriesForArea(area).map((value) => ({
+    value,
+    label: CATEGORY_LABELS[value],
+  }));
+}
+
+/**
+ * The happy path a complaint travels through.
+ *
+ * `reopened` is intentionally absent: it is not a forward step but a branch back
+ * into the flow, so it renders as an extra timeline entry rather than a stage.
+ */
 export const STATUS_ORDER: ComplaintStatus[] = [
   "reported",
   "assigned",
