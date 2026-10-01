@@ -128,15 +128,18 @@ export async function createComplaintAction(
       };
     }
 
-    const { error: linkError } = await supabase
-      .from("complaints")
-      .update({ image_path: path })
-      .eq("id", inserted.id);
+    // Students have no UPDATE policy on `complaints`, so linking the photo goes
+    // through a SECURITY DEFINER function that can only set image_path on the
+    // caller's own row. See `attach_complaint_image` in migration 0002.
+    const { data: linked, error: linkError } = await supabase.rpc(
+      "attach_complaint_image",
+      { target_complaint_id: inserted.id, target_image_path: path },
+    );
 
-    if (linkError) {
+    if (linkError || !linked) {
       // The object is stored but unlinked. Log it loudly: the row is orphaned and
       // needs a lifecycle rule to clean up, which Phase 4 will add.
-      console.error("[complaints] image link failed:", linkError.message);
+      console.error("[complaints] image link failed:", linkError?.message);
     }
   }
 

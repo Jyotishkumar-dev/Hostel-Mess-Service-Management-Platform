@@ -184,7 +184,16 @@ export type Database = {
       };
     };
     Views: { [_ in never]: never };
-    Functions: { [_ in never]: never };
+    Functions: {
+      /**
+       * The only write a student may make after creating a complaint. SECURITY
+       * DEFINER and scoped to the caller's own row — see migration 0002.
+       */
+      attach_complaint_image: {
+        Args: { target_complaint_id: string; target_image_path: string };
+        Returns: boolean;
+      };
+    };
     Enums: {
       user_role: UserRole;
       service_area: ServiceArea;

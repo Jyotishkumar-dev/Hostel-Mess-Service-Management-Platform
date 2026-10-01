@@ -322,6 +322,46 @@ for select to authenticated
 using ( (select public.is_admin((select auth.uid()))) );
 
 -- ---------------------------------------------------------------------------
+-- Attaching a photo to a complaint
+-- ---------------------------------------------------------------------------
+-- SECURITY: a student has no UPDATE policy on `complaints`, which is exactly
+-- what keeps status, priority and assignment out of reach. It also blocks the
+-- one write a student legitimately needs: linking the photo they just uploaded
+-- to the complaint they just created.
+--
+-- This function is the narrow exception. It is SECURITY DEFINER so RLS does not
+-- block it, but it can only touch `image_path`, only on a row the caller owns,
+-- and only with a path inside the caller's own storage namespace. It cannot be
+-- used to change status, priority or assignment.
+create or replace function public.attach_complaint_image(
+  target_complaint_id uuid,
+  target_image_path text
+)
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  -- The path must live in the caller's own folder, matching the storage RLS
+  -- policies. Rejects anything like complaints/<someone-else>/...
+  if target_image_path !~ ('^complaints/' || (select auth.uid())::text || '/') then
+    return false;
+  end if;
+
+  update public.complaints
+     set image_path = target_image_path
+   where id = target_complaint_id
+     and user_id = (select auth.uid());
+
+  return found;
+end;
+$$;
+
+revoke all on function public.attach_complaint_image(uuid, text) from public;
+grant execute on function public.attach_complaint_image(uuid, text) to authenticated;
+
+-- ---------------------------------------------------------------------------
 -- Storage: private complaint image bucket
 -- ---------------------------------------------------------------------------
 -- The bucket is PRIVATE (public = false). Images are never served from a

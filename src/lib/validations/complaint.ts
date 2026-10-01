@@ -60,7 +60,7 @@ export type ComplaintValues = z.infer<typeof complaintSchema>;
 /** Default values used to reset the form after a submit attempt. */
 export const complaintDefaults: ComplaintValues = {
   serviceType: "hostel",
-  category: "cleaning",
+  category: "water",
   title: "",
   description: "",
   location: "",

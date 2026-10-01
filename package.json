@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "next typegen && tsc --noEmit"
+    "typecheck": "next typegen && tsc --noEmit",
+    "verify:db": "zsh scripts/verify-db.sh",
+    "verify:validation": "tsx scripts/verify-validation.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -36,7 +38,8 @@
     "eslint-config-next": "16.3.8",
     "shadcn": "^4.21.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   },
-  "description": "Hostel and Mess Service Management Platform — closed-loop student feedback to service improvement"
+  "description": "Hostel and Mess Service Management Platform \u2014 closed-loop student feedback to service improvement"
 }

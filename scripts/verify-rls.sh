@@ -25,6 +25,15 @@ as() {
     -c "set role authenticated; set request.jwt.claim.sub = '$uid'; $*" 2>&1 | tail -1
 }
 
+# Full output as `authenticated` — needed for RETURNING clauses, whose rows sit
+# above the trailing INSERT/UPDATE tag.
+asall() {
+  local uid=$1
+  shift
+  $PGBIN/psql -h /tmp/kilo -p 55432 -U postgres -At \
+    -c "set role authenticated; set request.jwt.claim.sub = '$uid'; $*" 2>&1
+}
+
 # Runs SQL as the superuser (schema owner), bypassing RLS.
 # Single scalar value (last line).
 own() { $PGBIN/psql -h /tmp/kilo -p 55432 -U postgres -At -c "$1" 2>&1 | tail -1; }
@@ -48,6 +57,13 @@ check() {
   fi
 }
 
+print "### Reset (so the suite is safe to re-run against the same database)"
+own "
+  truncate public.complaint_events, public.complaints, storage.objects, public.profiles, auth.users
+  restart identity cascade;
+" > /dev/null
+
+print ""
 print "### Fixtures"
 # Inserting into auth.users fires the Phase 2 signup trigger, which creates the
 # profile with role 'student'. Only the admin is promoted afterwards, which is
@@ -112,11 +128,11 @@ check "title length floor is enforced" "1" \
 
 # Mirrors the exact statement createComplaintAction issues, including the
 # RETURNING clause that feeds the success confirmation.
-returned=$(as "$B" "insert into public.complaints (service_type, category, title, description, location)
-              values ('mess', 'hygiene', 'Spoons were dirty', 'The spoons in the main mess were not washed today.', 'Main Mess')
-              returning id, reference, status, created_at;")
-check "insert...returning yields a reference and status=reported" "CMP-|reported" \
-  "$(print -r -- "$returned" | grep -oE 'CMP-[0-9]+\|reported' | sed 's/^CMP-[0-9]*//')"
+returned=$(asall "$B" "insert into public.complaints (service_type, category, title, description, location)
+               values ('mess', 'hygiene', 'Spoons were dirty', 'The spoons in the main mess were not washed today.', 'Main Mess')
+               returning id, reference, status, created_at;")
+check "insert...returning yields a CMP-nnnn reference and status=reported" "yes" \
+  "$(print -r -- "$returned" | grep -qE 'CMP-[0-9]+\|reported' && echo yes || echo no)"
 
 check "short description is rejected" "1" \
   "$(as "$A" "insert into public.complaints (service_type, category, title, description, location)
@@ -130,7 +146,8 @@ print "### C. Ownership isolation (the Test 7 guarantee)"
 check "student A sees only their own 2 complaints" "2" \
   "$(as "$A" 'select count(*) from public.complaints;')"
 
-check "student B sees only their own 1 complaint" "1" \
+check "student B sees only their own complaints (not A's)" \
+  "$(own "select count(*) from public.complaints where user_id = '$B';")" \
   "$(as "$B" 'select count(*) from public.complaints;')"
 
 check "student A cannot see B's complaint in their list" "0" \
@@ -151,22 +168,53 @@ as "$B" "update public.complaints set status = 'resolved';" > /dev/null
 check "student B cannot mark anything resolved (blocked, not applied)" "0" \
   "$(own "select count(*) from public.complaints where status = 'resolved';")"
 
+before_priority=$(own "select count(*) from public.complaints where priority = 'medium';")
 as "$B" "update public.complaints set priority = 'critical';" > /dev/null
-check "student B cannot change anyone's priority" "3" \
+check "student B cannot change anyone's priority" "$before_priority" \
   "$(own "select count(*) from public.complaints where priority = 'medium';")"
 
+before_image=$(own "select count(*) from public.complaints where image_path is not null;")
 as "$B" "update public.complaints set image_path = 'x';" > /dev/null
-check "student B cannot attach a photo to A's complaint" "0" \
+check "student B cannot set image_path with a plain UPDATE" "$before_image" \
   "$(own "select count(*) from public.complaints where image_path is not null;")"
 
+before_delete=$(own "select count(*) from public.complaints;")
 as "$B" "delete from public.complaints;" > /dev/null
-check "no student can delete any complaint" "3" \
+check "no student can delete any complaint" "$before_delete" \
   "$(own "select count(*) from public.complaints;")"
+
+print ""
+print "### D2. Attaching a photo is the one write a student gets"
+
+own_id=$(own "select id from public.complaints where title = 'Rice was cold';")
+own_path="complaints/$A/$own_id/evidence.jpg"
+
+check "attach_complaint_image links the photo on the caller own row" "t" \
+  "$(as "$A" "select attach_complaint_image('$own_id', '$own_path');")"
+
+check "the path is persisted under the caller namespace" "yes" \
+  "$(own "select case when image_path = '$own_path' then 'yes' else 'no' end from public.complaints where id = '$own_id';")"
+
+check "a student cannot attach to another student complaint" "f" \
+  "$(as "$B" "select attach_complaint_image('$own_id', 'complaints/$B/$own_id/evidence.jpg');")"
+
+check "the rejected attempt did not overwrite the path" "yes" \
+  "$(own "select case when image_path = '$own_path' then 'yes' else 'no' end from public.complaints where id = '$own_id';")"
+
+check "a foreign storage path is rejected" "f" \
+  "$(as "$A" "select attach_complaint_image('$own_id', 'complaints/$B/$own_id/evidence.jpg');")"
+
+check "a path outside complaints/ is rejected" "f" \
+  "$(as "$A" "select attach_complaint_image('$own_id', 'etc/passwd');")"
+
+check "attach_complaint_image cannot change status" "reported" \
+  "$(own "select status from public.complaints where id = '$own_id';")"
 
 print ""
 print "### E. Admin retains oversight (Phase 4 groundwork)"
 
-check "admin can read all complaints" "3" \
+check "admin can read all complaints" \
+  "$(own "select count(*) from public.complaints;")" \
   "$(as "$ADMIN" 'select count(*) from public.complaints;')"
 
 as "$ADMIN" "update public.complaints set status = 'assigned' where title = 'Rice was cold';" > /dev/null
