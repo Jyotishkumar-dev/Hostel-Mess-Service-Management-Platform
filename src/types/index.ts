@@ -1,12 +1,15 @@
 import type { LucideIcon } from "lucide-react";
 import type { ServiceArea } from "@/types/complaint";
+import type { UserRole, AuthUser, AuthActionState } from "@/types/auth";
 
 /** The three roles the product is designed around. */
 export const ROLES = ["student", "admin", "staff"] as const;
 
-export type Role = (typeof ROLES)[number];
+/** Alias for backward compatibility with Phase 1 code. */
+export type Role = UserRole;
 
-/** Placeholder identity shown in the top bar during Phase 1. */
+/** Placeholder identity shown in the top bar during Phase 1.
+ * @deprecated Use AuthUser from @/types/auth instead. */
 export interface SessionUser {
   name: string;
   email: string;
@@ -38,3 +41,6 @@ export interface ChartDatum {
   value: number;
   area?: ServiceArea;
 }
+
+/** Re-export auth types for convenience. */
+export type { UserRole, AuthUser, AuthActionState };

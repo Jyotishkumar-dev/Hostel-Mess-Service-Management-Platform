@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { optionalUser, roleHome } from "@/lib/auth";
 import {
   ArrowRight,
   Building2,
@@ -75,7 +76,21 @@ const STAGES = [
   },
 ];
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const user = await optionalUser();
+
+  // If signed in, send them straight to their dashboard
+  if (user) {
+    return (
+      <html lang="en">
+        <head>
+          <meta httpEquiv="refresh" content={`0;url=${roleHome(user.role)}`} />
+        </head>
+        <body>Redirecting…</body>
+      </html>
+    );
+  }
+
   return (
     <div className="flex min-h-dvh flex-col">
       <LandingNav />
@@ -102,18 +117,18 @@ export default function LandingPage() {
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Button asChild size="lg">
-                  <Link href="/student">
-                    Report an issue
+                  <Link href="/signup">
+                    Create account
                     <ArrowRight data-icon="inline-end" aria-hidden="true" />
                   </Link>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <Link href="/admin">Explore the admin view</Link>
+                  <Link href="/login">Sign in</Link>
                 </Button>
               </div>
 
               <p className="mt-4 text-xs text-muted-foreground">
-                Phase 1 preview with sample records. Sign-in arrives in Phase 2.
+                Phase 1 preview with sample records. Sign-in is now available in Phase 2.
               </p>
             </div>
           </div>
@@ -202,8 +217,8 @@ export default function LandingPage() {
                 with the original context intact.
               </p>
               <Button asChild variant="link" className="mt-4 px-0">
-                <Link href="/staff">
-                  See the staff workflow
+                <Link href="/signup">
+                  Try it
                   <ArrowRight data-icon="inline-end" aria-hidden="true" />
                 </Link>
               </Button>
@@ -264,7 +279,7 @@ export default function LandingPage() {
 
             <div className="mt-10 grid gap-4 md:grid-cols-3">
               <RoleCard
-                href="/student"
+                href="/signup"
                 title="Student"
                 description="Report an issue, track its status and confirm the fix."
                 points={[
@@ -274,7 +289,7 @@ export default function LandingPage() {
                 ]}
               />
               <RoleCard
-                href="/admin"
+                href="/signup"
                 title="Admin"
                 description="Triage the queue, prioritise work and watch service trends."
                 points={[
@@ -284,7 +299,7 @@ export default function LandingPage() {
                 ]}
               />
               <RoleCard
-                href="/staff"
+                href="/signup"
                 title="Staff"
                 description="Work a clear, owned list and log what was actually done."
                 points={[
@@ -356,7 +371,7 @@ function RoleCard({
         </ul>
         <Button asChild variant="link" size="sm" className="mt-5 self-start px-0">
           <Link href={href}>
-            Open {title.toLowerCase()} view
+            Learn more about {title.toLowerCase()} view
             <ArrowRight data-icon="inline-end" aria-hidden="true" />
           </Link>
         </Button>

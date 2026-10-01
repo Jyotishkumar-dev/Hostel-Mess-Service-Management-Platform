@@ -1,22 +1,23 @@
 import { DashboardShell } from "@/components/layout/dashboard-shell";
 import type { Role } from "@/types";
+import type { AuthUser } from "@/types/auth";
 
 /**
  * Thin wrapper so each role folder only needs a five-line layout:
  *
- *   export default function StudentLayout({ children }: LayoutProps<'/student'>) {
- *     return <RoleLayout role="student">{children}</RoleLayout>
+ *   export default async function StudentLayout({ children }: LayoutProps<'/student'>) {
+ *     const user = await requireRole("student");
+ *     return <RoleLayout user={user}>{children}</RoleLayout>;
  *   }
  *
- * The role itself is static for now. Phase 2 replaces it with the role from
- * the Supabase session.
+ * The role comes from the Supabase session. Phase 1 used a static string.
  */
 export function RoleLayout({
-  role,
+  user,
   children,
 }: {
-  role: Role;
+  user: AuthUser;
   children: React.ReactNode;
 }) {
-  return <DashboardShell role={role}>{children}</DashboardShell>;
+  return <DashboardShell user={user} role={user.role}>{children}</DashboardShell>;
 }

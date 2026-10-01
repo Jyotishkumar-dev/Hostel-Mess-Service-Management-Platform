@@ -1,37 +1,66 @@
 import { createServerClient as createSupabaseServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { getSupabaseUrl, getSupabaseAnonKey, assertSupabaseConfigured } from "@/lib/supabase/env";
 
 /**
  * Server-side Supabase client for Server Components, Server Actions and Route
  * Handlers.
  *
- * In Next.js 15+ `cookies()` returns a Promise, so it must be awaited before
- * reading. Cookie writes only work inside a Server Action or Route Handler —
- * reading is enough for the pages built so far.
+ * Returns null if Supabase is not configured, allowing the UI to degrade
+ * gracefully instead of throwing during static generation or build.
  */
 export async function createServerClient() {
+  const url = getSupabaseUrl();
+  const key = getSupabaseAnonKey();
+
+  if (!url || !key) return null;
+
   const cookieStore = await cookies();
 
-  return createSupabaseServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options),
-            );
-          } catch {
-            // Called from a Server Component, where cookies are read-only.
-            // Safe to ignore — middleware refreshes the session.
-          }
-        },
+  return createSupabaseServerClient(url, key, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll();
+      },
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options),
+          );
+        } catch {
+          // Called from a Server Component, where cookies are read-only.
+          // Safe to ignore — middleware/proxy refreshes the session.
+        }
       },
     },
-  );
+  });
+}
+
+/** Create a typed server client with Database generics. */
+import type { Database } from "@/types/auth";
+
+export async function createTypedServerClient() {
+  const url = getSupabaseUrl();
+  const key = getSupabaseAnonKey();
+
+  if (!url || !key) return null;
+
+  const cookieStore = await cookies();
+
+  return createSupabaseServerClient<Database>(url, key, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll();
+      },
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options),
+          );
+        } catch {
+          // Called from a Server Component, where cookies are read-only.
+        }
+      },
+    },
+  });
 }

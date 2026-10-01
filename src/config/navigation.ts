@@ -6,14 +6,13 @@ import {
   MessageSquarePlus,
   Users,
 } from "lucide-react";
-import type { Role, RoleNav, SessionUser } from "@/types";
+import type { Role, RoleNav, NavItem } from "@/types";
 
 /**
  * Static role configuration for Phase 1.
  *
- * Authentication does not exist yet, so each dashboard layout picks its role
- * from this file. When Supabase Auth lands, `sessionUser` will come from the
- * signed-in profile and the layout will read the role from the session instead.
+ * The role switcher in the topbar has been replaced by real authentication.
+ * This file now only contains navigation structure.
  */
 
 export const ROLE_NAV: Record<Role, RoleNav> = {
@@ -94,31 +93,6 @@ export const ROLE_NAV: Record<Role, RoleNav> = {
   },
 };
 
-/** Placeholder identities, used until Supabase Auth is wired up. */
-export const MOCK_SESSIONS: Record<Role, SessionUser> = {
-  student: {
-    name: "Aarav Sharma",
-    email: "aarav.sharma@student.lpu.in",
-    role: "student",
-    initials: "AS",
-    context: "B.Tech · Semester 5",
-  },
-  admin: {
-    name: "Meera Iyer",
-    email: "meera.iyer@lpu.in",
-    role: "admin",
-    initials: "MI",
-    context: "Campus Services · Administrator",
-  },
-  staff: {
-    name: "Rakesh Yadav",
-    email: "rakesh.yadav@lpu.in",
-    role: "staff",
-    initials: "RY",
-    context: "Maintenance · Hostel Operations",
-  },
-};
-
 /**
  * Works out which role a pathname belongs to. Used by the landing page links
  * and by the shell to highlight the active section.
@@ -128,4 +102,14 @@ export function roleFromPath(pathname: string): Role | null {
   if (pathname.startsWith("/staff")) return "staff";
   if (pathname.startsWith("/student")) return "student";
   return null;
+}
+
+/** Return the dashboard home path for a role. */
+export function roleHome(role: Role): string {
+  return ROLE_NAV[role].basePath;
+}
+
+/** Nav items for a role (useful for the landing footer). */
+export function navItemsFor(role: Role): NavItem[] {
+  return ROLE_NAV[role].items;
 }

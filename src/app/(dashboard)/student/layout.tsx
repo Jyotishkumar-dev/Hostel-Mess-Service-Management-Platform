@@ -1,6 +1,7 @@
-import type { ReactNode } from "react";
+import { requireRole } from "@/lib/auth";
 import { RoleLayout } from "@/components/layout/role-layout";
 
-export default function StudentLayout({ children }: { children: ReactNode }) {
-  return <RoleLayout role="student">{children}</RoleLayout>;
+export default async function StudentLayout({ children }: { children: React.ReactNode }) {
+  const user = await requireRole("student");
+  return <RoleLayout user={user}>{children}</RoleLayout>;
 }

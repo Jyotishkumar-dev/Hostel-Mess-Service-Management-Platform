@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { useAuthUser } from "@/components/auth/user-context";
 import {
   ArrowRight,
   CheckCircle2,
@@ -26,20 +27,19 @@ import {
   MOCK_STUDENT_SUMMARY,
   recentComplaints,
 } from "@/lib/mock";
-import { MOCK_SESSIONS } from "@/config/navigation";
 
 export const metadata: Metadata = {
   title: "Dashboard",
 };
 
 export default function StudentDashboardPage() {
-  const user = MOCK_SESSIONS.student;
+  const user = useAuthUser();
   const recent = recentComplaints(MOCK_STUDENT_COMPLAINTS, 4);
 
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
-        title={`Good afternoon, ${user.name.split(" ")[0]}`}
+        title={`Good afternoon, ${user.fullName.split(" ")[0]}`}
         description="Everything you have reported, and where each issue stands today."
         actions={
           <Button asChild>
