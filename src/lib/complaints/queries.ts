@@ -26,7 +26,7 @@ const NOT_CONFIGURED =
 
 /** Columns selected for the staff/admin detail and worklist. */
 export const STAFF_COMPLAINT_SELECT =
-  "id, reference, user_id, service_type, category, title, description, location, image_path, status, priority, assigned_staff_id, resolution_note, resolved_by, resolved_at, resolution_image_path, created_at, updated_at, assigned_staff:assigned_staff_id ( id, full_name, role ), resolved_by_profile:resolved_by ( id, full_name, role )";
+  "id, reference, user_id, service_type, category, title, description, location, image_path, status, priority, assigned_staff_id, resolution_note, resolved_by, resolved_at, resolution_image_path, created_at, updated_at, assigned_staff:assigned_staff_id ( id, full_name, role ), resolved_by_profile:resolved_by ( id, full_name, role ), student:user_id ( full_name )";
 
 /** Columns selected for every student complaint read. */
 const COMPLAINT_SELECT =
@@ -289,7 +289,7 @@ export const listStaffComplaints = cache(async (): Promise<Result<Complaint[]>> 
     };
   }
 
-  return mapStaffRows(supabase, (data ?? []) as ComplaintWithStaff[]);
+  return mapComplaintRows(supabase, (data ?? []) as ComplaintWithStaff[]);
 });
 
 /**
@@ -322,7 +322,7 @@ export const getStaffComplaint = cache(
 
     if (!data) return { ok: true, data: null };
 
-    const mapped = await mapStaffRows(supabase, [data as ComplaintWithStaff]);
+    const mapped = await mapComplaintRows(supabase, [data as ComplaintWithStaff]);
 
     if (!mapped.ok) return mapped;
     return { ok: true, data: mapped.data[0] ?? null };
@@ -334,7 +334,7 @@ export const getStaffComplaint = cache(
  * and mints signed URLs for both the student evidence photo and the optional
  * resolution photo.
  */
-async function mapStaffRows(
+export async function mapComplaintRows(
   supabase: NonNullable<Awaited<ReturnType<typeof createTypedServerClient>>>,
   rows: ComplaintWithStaff[],
 ): Promise<Result<Complaint[]>> {

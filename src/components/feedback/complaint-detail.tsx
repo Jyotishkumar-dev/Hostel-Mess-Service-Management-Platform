@@ -100,6 +100,16 @@ export function ComplaintDetail({
             </DetailSection>
           ) : null}
 
+          {complaint.resolutionImageUrl ? (
+            <DetailSection
+              icon={ImageIcon}
+              title="Resolution photo"
+              description="What the issue looks like after the fix."
+            >
+              <ComplaintImage imageUrl={complaint.resolutionImageUrl} />
+            </DetailSection>
+          ) : null}
+
           <DetailSection
             icon={ImageIcon}
             title="Photo evidence"

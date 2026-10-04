@@ -22,6 +22,8 @@ import type {
 /** The joined shape a complaint select returns. */
 export type ComplaintWithStaff = ComplaintDbRow & {
   assigned_staff: Pick<Profile, "id" | "full_name" | "role"> | null;
+  /** Joined profile of the reporting student (NULL where RLS hides the row). */
+  student: Pick<Profile, "full_name"> | null;
   /** Joined profile of whoever marked the complaint resolved. */
   resolved_by_profile: Pick<Profile, "id" | "full_name" | "role"> | null;
 };
@@ -93,7 +95,8 @@ export function toComplaint(
     .sort((a, b) => a.created_at.localeCompare(b.created_at))
     .map(toStatusChange);
 
-  const studentName = options.studentName ?? "Student";
+  const studentName =
+    options.studentName ?? row.student?.full_name ?? "Student";
 
   return {
     id: row.id,

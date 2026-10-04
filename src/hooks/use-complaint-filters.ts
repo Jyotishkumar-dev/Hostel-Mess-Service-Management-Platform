@@ -41,6 +41,8 @@ export interface ComplaintFilters {
   priority: PriorityFilter;
   area: AreaFilter;
   sort: SortKey;
+  /** Free-text search across reference, title and location. */
+  search: string;
 }
 
 export const DEFAULT_FILTERS: ComplaintFilters = {
@@ -48,12 +50,15 @@ export const DEFAULT_FILTERS: ComplaintFilters = {
   priority: "all",
   area: "all",
   sort: "recent",
+  search: "",
 };
 
 export function useComplaintFilters(complaints: Complaint[]) {
   const [filters, setFilters] = useState<ComplaintFilters>(DEFAULT_FILTERS);
 
   const visible = useMemo(() => {
+    const needle = filters.search.trim().toLowerCase();
+
     const filtered = complaints.filter((complaint) => {
       if (filters.status !== "all" && complaint.status !== filters.status)
         return false;
@@ -63,6 +68,11 @@ export function useComplaintFilters(complaints: Complaint[]) {
       )
         return false;
       if (filters.area !== "all" && complaint.area !== filters.area) return false;
+      if (needle) {
+        const hay =
+          `${complaint.reference} ${complaint.title} ${complaint.location}`.toLowerCase();
+        if (!hay.includes(needle)) return false;
+      }
       return true;
     });
 
@@ -77,16 +87,17 @@ export function useComplaintFilters(complaints: Complaint[]) {
       );
     }
 
-    return [...filtered].sort(
-      (a, b) =>
-        STATUS_WEIGHT[a.status] - STATUS_WEIGHT[b.status] ||
-        a.reference.localeCompare(b.reference),
-    );
+      return [...filtered].sort(
+        (a, b) =>
+          STATUS_WEIGHT[a.status] - STATUS_WEIGHT[b.status] ||
+          a.reference.localeCompare(b.reference),
+      );
   }, [complaints, filters]);
 
   const isFiltered = filters.status !== "all"
     || filters.priority !== "all"
-    || filters.area !== "all";
+    || filters.area !== "all"
+    || filters.search.trim().length > 0;
 
   return {
     filters,

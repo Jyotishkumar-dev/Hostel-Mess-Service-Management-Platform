@@ -4,18 +4,13 @@ import { createTypedServerClient } from "@/lib/supabase";
 import { requireRole } from "@/lib/auth/session";
 import { IMAGE_BUCKET } from "@/lib/complaints/constants";
 import { validateImage } from "@/lib/validations/image";
-import { requiredText } from "@/lib/validations/common";
+import { resolutionNoteSchema } from "@/lib/validations/complaint";
 import { revalidatePath } from "next/cache";
 
 import type { StaffActionState } from "@/lib/staff/state";
 
 const NOT_CONFIGURED =
   "Storage is not connected yet. Add your Supabase keys to .env.local.";
-
-const resolutionNoteSchema = requiredText("Resolution note", 2000).min(
-  10,
-  "The resolution note needs a bit more detail — explain what was done.",
-);
 
 /**
  * Moves the caller's assigned complaint from `assigned` -> `in_progress`
@@ -101,10 +96,14 @@ export async function resolveComplaintAction(
   }
 
   // Server-side validation: client checks are convenience, not a boundary.
-  requiredText("Resolution note", 2000).min(
-  10,
-  "The resolution note needs a bit more detail — explain what was done.",
-);
+  const parsed = resolutionNoteSchema.safeParse(note);
+  if (!parsed.success) {
+    return {
+      status: "error",
+      message: "Please fill in the resolution note.",
+      fieldErrors: { note: "Resolution note is required." },
+    };
+  }
 
   const file =
     formData.get("photo") instanceof File &&

@@ -1,45 +1,92 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   ArrowRight,
   CheckCircle2,
   ClipboardList,
-  Flame,
   ListChecks,
   Timer,
 } from "lucide-react";
-import Link from "next/link";
-import { requireUser } from "@/lib/auth";
 import { PageHeader, SectionHeading } from "@/components/layout/page-header";
 import { StatCardRow } from "@/components/dashboard/stat-card";
 import { ComplaintCard } from "@/components/feedback/complaint-card";
 import { EmptyState } from "@/components/layout/empty-state";
 import { Button } from "@/components/ui/button";
-import { MOCK_ASSIGNED_COMPLAINTS } from "@/lib/mock";
-import { staffStats } from "@/lib/mock/statistics";
+import { listStaffComplaints } from "@/lib/complaints/queries";
+import type { Complaint, ComplaintPriority } from "@/types/complaint";
+import type { StatTile } from "@/lib/mock/statistics";
 
 export const metadata: Metadata = {
   title: "Staff Dashboard",
 };
 
-export default async function StaffDashboardPage() {
-  const user = await requireUser();
-  const assigned = MOCK_ASSIGNED_COMPLAINTS;
+const PRIORITY_ORDER: ComplaintPriority[] = ["critical", "high", "medium", "low"];
 
-  /** Sorted so the work that matters most is at the top. */
-  const todo = assigned.filter((complaint) => complaint.status !== "resolved");
-  const urgent = todo
-    .filter(
-      (complaint) =>
-        complaint.priority === "critical" || complaint.priority === "high",
-    )
-    .slice(0, 3);
-  const done = assigned.filter((complaint) => complaint.status === "resolved");
+/** Sorts the work-that-matters-most to the top: priority, then oldest first. */
+function urgentFirst(complaints: Complaint[]): Complaint[] {
+  return [...complaints].sort((a, b) => {
+    const byPriority =
+      PRIORITY_ORDER.indexOf(a.priority) - PRIORITY_ORDER.indexOf(b.priority);
+    if (byPriority !== 0) return byPriority;
+    return a.createdAt.localeCompare(b.createdAt);
+  });
+}
+
+export default async function StaffDashboardPage() {
+  const result = await listStaffComplaints();
+
+  if (!result.ok) {
+    return (
+      <div className="flex flex-col gap-6">
+        <PageHeader
+          title="Your work"
+          description="Issues routed to you by the admin, most urgent first."
+        />
+        <EmptyState
+          icon={ListChecks}
+          title="We could not load your dashboard"
+          description={result.error}
+          action={
+            <Button asChild variant="outline">
+              <Link href="/staff">Try again</Link>
+            </Button>
+          }
+        />
+      </div>
+    );
+  }
+
+  const complaints = result.data;
+
+  const pending = complaints.filter((c) => c.status === "assigned").length;
+  const inProgress = complaints.filter((c) => c.status === "in_progress").length;
+  const resolved = complaints.filter((c) => c.status === "resolved").length;
+
+  const todo = complaints.filter((c) => c.status !== "resolved");
+  const urgent = urgentFirst(
+    todo.filter((c) => c.priority === "critical" || c.priority === "high"),
+  ).slice(0, 3);
+  const done = complaints
+    .filter((c) => c.status === "resolved")
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .slice(0, 4);
+
+  const stats: StatTile[] = [
+    { label: "Assigned to me", value: complaints.length, hint: "Issues routed to you" },
+    {
+      label: "Needs attention",
+      value: pending,
+      hint: "Assigned, not started yet",
+    },
+    { label: "In progress", value: inProgress, hint: "Work underway" },
+    { label: "Resolved", value: resolved, hint: "Completed this cycle" },
+  ];
 
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
-        title={`Your work, ${user.fullName.split(" ")[0]}`}
-        description="Assigned issues for the maintenance team, most urgent first."
+        title="Your work"
+        description="Issues routed to you by the admin, most urgent first."
         actions={
           <Button asChild variant="outline">
             <Link href="/staff/issues">
@@ -51,8 +98,8 @@ export default async function StaffDashboardPage() {
       />
 
       <StatCardRow
-        stats={staffStats(assigned)}
-        icons={[ClipboardList, Timer, CheckCircle2, Flame]}
+        stats={stats}
+        icons={[ClipboardList, ListChecks, Timer, CheckCircle2]}
       />
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -86,7 +133,7 @@ export default async function StaffDashboardPage() {
         <section>
           <SectionHeading
             title="Recently closed"
-            description="Completed and confirmed by the student."
+            description="Work you have already completed."
             className="mb-3"
           />
 
@@ -94,11 +141,11 @@ export default async function StaffDashboardPage() {
             <EmptyState
               icon={CheckCircle2}
               title="No completed work yet"
-              description="Issues you resolve will be listed here once the student confirms the fix."
+              description="Issues you resolve will be listed here once marked complete."
             />
           ) : (
             <ul className="rounded-xl bg-card ring-1 ring-foreground/10">
-              {done.slice(0, 4).map((complaint) => (
+              {done.map((complaint) => (
                 <li
                   key={complaint.id}
                   className="px-4 py-3.5 not-last:border-b"
@@ -127,8 +174,8 @@ export default async function StaffDashboardPage() {
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Sample records for the Phase 1 preview. Status updates and resolution
-        notes are saved through Supabase in Phase 2.
+        Showing {complaints.length}{" "}
+        {complaints.length === 1 ? "issue" : "issues"} assigned to you.
       </p>
     </div>
   );

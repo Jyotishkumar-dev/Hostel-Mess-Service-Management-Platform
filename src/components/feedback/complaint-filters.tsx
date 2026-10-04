@@ -1,6 +1,6 @@
 "use client";
 
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, Search } from "lucide-react";
 import {
   COMPLAINT_PRIORITIES,
   COMPLAINT_STATUSES,
@@ -9,6 +9,7 @@ import {
 } from "@/types/complaint";
 import { AREA_LABELS, priorityStyle, statusStyle } from "@/config/status";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -75,6 +76,29 @@ export function ComplaintFilterBar({
       </Tabs>
 
       <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
+        <div className="flex items-center gap-2">
+          <Label
+            htmlFor={`filter-search-${visibleCount}`}
+            className="text-xs text-muted-foreground"
+          >
+            Search
+          </Label>
+          <div className="relative">
+            <Search
+              className="absolute left-2 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground"
+              aria-hidden="true"
+            />
+            <Input
+              id={`filter-search-${visibleCount}`}
+              placeholder="Title, reference or location…"
+              value={filters.search}
+              onChange={(event) => patch({ search: event.target.value })}
+              className="pl-7 w-56"
+              size="sm"
+            />
+          </div>
+        </div>
+
         <div className="flex items-center gap-2">
           <Label
             htmlFor="filter-priority"

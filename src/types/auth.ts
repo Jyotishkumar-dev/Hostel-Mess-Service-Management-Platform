@@ -225,7 +225,7 @@ export type Database = {
           p_complaint_id: string;
           p_new_status: ComplaintStatus;
           p_note: string;
-          p_resolution_image_path: string;
+          p_resolution_image_path: string | null;
         };
         Returns: boolean;
       };
