@@ -94,7 +94,6 @@ export function ComplaintFilterBar({
               value={filters.search}
               onChange={(event) => patch({ search: event.target.value })}
               className="pl-7 w-56"
-              size="sm"
             />
           </div>
         </div>

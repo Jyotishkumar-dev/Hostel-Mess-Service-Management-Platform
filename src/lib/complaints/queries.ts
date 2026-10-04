@@ -301,7 +301,7 @@ export const listStaffComplaints = cache(async (): Promise<Result<Complaint[]>> 
  */
 export const getStaffComplaint = cache(
   async (id: string): Promise<Result<Complaint | null>> => {
-    const user = await requireRole("staff");
+    await requireRole("staff");
     const supabase = await createTypedServerClient();
 
     if (!supabase) return { ok: false, error: NOT_CONFIGURED };

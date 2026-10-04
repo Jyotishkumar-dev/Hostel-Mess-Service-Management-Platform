@@ -1,25 +1,23 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import {
+  useEffect,
+  useTransition,
+  useState,
+  useActionState,
+} from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useActionState } from "react";
 import { Play, CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUploader } from "@/components/feedback/image-uploader";
-import { resolutionNoteSchema } from "@/lib/validations/complaint";
+import { resolutionFormSchema } from "@/lib/validations/complaint";
 import { startWorkAction, resolveComplaintAction } from "@/lib/staff/actions";
 import { INITIAL_STAFF_STATE } from "@/lib/staff/state";
 import type { ComplaintStatus } from "@/types/complaint";
 import type { ResolutionNoteValues } from "@/lib/validations/complaint";
-
-type ClientState = {
-  status: "idle" | "success" | "error";
-  message?: string;
-  fieldErrors?: Record<string, string>;
-};
 
 type Props = {
   complaintId: string;
@@ -43,8 +41,6 @@ export function StaffWorkflowControls({ complaintId, reference, status }: Props)
     startWorkAction,
     INITIAL_STAFF_STATE,
   );
-  // Refreshing after a successful transition re-runs the parent Server
-  // Component, so the timeline and status reflect the new row immediately.
   useEffect(() => {
     if (startState.status === "success") router.refresh();
   }, [startState.status, router]);
@@ -71,6 +67,7 @@ export function StaffWorkflowControls({ complaintId, reference, status }: Props)
       <ResolutionForm
         complaintId={complaintId}
         reference={reference}
+        action={resolveAction}
         state={resolveState}
         isPending={resolvePending}
       />
@@ -81,10 +78,13 @@ export function StaffWorkflowControls({ complaintId, reference, status }: Props)
   return (
     <div className="flex flex-col gap-3">
       {startState.status === "error" ? (
-        <ErrorMessage message={startState.message} />
+        <p role="alert" className="text-sm text-destructive">{startState.message}</p>
       ) : null}
       {startState.status === "success" ? (
-        <SuccessMessage text={startState.message ?? "Issue marked as in progress."} />
+        <div className="flex items-start gap-2.5 rounded-lg border border-status-in-progress/25 bg-status-in-progress-bg/50 px-3.5 py-2.5 text-sm">
+          <CheckCircle2 className="mt-0.5 size-4 text-status-in-progress" />
+          <span>{startState.message ?? "Issue marked as in progress."}</span>
+        </div>
       ) : null}
 
       <form action={startAction}>
@@ -111,35 +111,21 @@ export function StaffWorkflowControls({ complaintId, reference, status }: Props)
   );
 }
 
-function SuccessMessage({ text }: { text: string }) {
-  return (
-    <div className="flex items-start gap-2.5 rounded-lg border border-status-in-progress/25 bg-status-in-progress-bg/50 px-3.5 py-2.5 text-sm">
-      <CheckCircle2 className="mt-0.5 size-4 text-status-in-progress" />
-      <span>{text}</span>
-    </div>
-  );
-}
-
-function ErrorMessage({ message }: { message?: string }) {
-  if (!message) return null;
-  return (
-    <div className="rounded-lg border border-destructive/25 bg-destructive/10 px-3.5 py-2.5 text-sm text-destructive">
-      {message}
-    </div>
-  );
+interface ResolutionFormProps {
+  complaintId: string;
+  reference: string;
+  action: (payload: FormData) => void;
+  state: { status: "idle" | "success" | "error"; message?: string; fieldErrors?: Record<string, string> };
+  isPending: boolean;
 }
 
 function ResolutionForm({
   complaintId,
   reference,
+  action,
   state,
   isPending,
-}: {
-  complaintId: string;
-  reference: string;
-  state: ClientState;
-  isPending: boolean;
-}) {
+}: ResolutionFormProps) {
   const [photo, setPhoto] = useState<File | null>(null);
   const {
     register,
@@ -148,19 +134,16 @@ function ResolutionForm({
     clearErrors,
     formState: { errors },
   } = useForm<ResolutionNoteValues>({
-    resolver: zodResolver(resolutionNoteSchema),
+    resolver: zodResolver(resolutionFormSchema),
     defaultValues: { note: "" },
   });
 
-  // Server-side validation errors are re-attached to the field so the student
-  // sees them inline, exactly like the complaint form does.
   useEffect(() => {
     const noteError = state.fieldErrors?.note;
     if (noteError) setError("note", { type: "server", message: noteError });
   }, [state, setError]);
 
   const [, startTransition] = useTransition();
-  const [, formAction] = useActionState(resolveComplaintAction, INITIAL_STAFF_STATE);
 
   const onSubmit = handleSubmit((values) => {
     clearErrors();
@@ -170,7 +153,7 @@ function ResolutionForm({
     payload.set("note", values.note);
     if (photo) payload.set("photo", photo);
 
-    startTransition(() => formAction(payload));
+    startTransition(() => action(payload));
   });
 
   return (
@@ -220,7 +203,7 @@ function ResolutionForm({
         </div>
       ) : null}
 
-      <div className="flex items-center justify-between gap-3 pt-2">
+      <div className="pt-2">
         <Button type="submit" disabled={isPending}>
           {isPending ? (
             <>

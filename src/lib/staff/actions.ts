@@ -28,7 +28,7 @@ export async function startWorkAction(
   const supabase = await createTypedServerClient();
   if (!supabase) return { status: "error", message: NOT_CONFIGURED };
 
-  const user = await requireRole("staff");
+  await requireRole("staff");
   const complaintId = formData.get("complaintId")?.toString();
 
   if (!complaintId) {

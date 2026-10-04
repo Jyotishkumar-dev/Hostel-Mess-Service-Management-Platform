@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Agent Manager git worktrees are separate working trees, not part of
+    // this checkout — don't lint them from the parent repo.
+    ".kilo/worktrees/**",
   ]),
 ]);
 

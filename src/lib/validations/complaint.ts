@@ -83,4 +83,12 @@ export const resolutionNoteSchema = requiredText("Resolution note", 2000).min(
   "The resolution note needs a bit more detail — explain what was done.",
 );
 
-export type ResolutionNoteValues = z.input<typeof resolutionNoteSchema>;
+/**
+ * Object wrapper around `resolutionNoteSchema` for `react-hook-form`'s
+ * `zodResolver`, which only accepts object schemas with named fields. The bare
+ * `resolutionNoteSchema` above is still used directly by the Server Action to
+ * validate the raw `note` string.
+ */
+export const resolutionFormSchema = z.object({ note: resolutionNoteSchema });
+
+export type ResolutionNoteValues = z.input<typeof resolutionFormSchema>;

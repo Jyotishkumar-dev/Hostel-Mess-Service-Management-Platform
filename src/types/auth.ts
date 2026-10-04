@@ -126,6 +126,7 @@ export type Database = {
       };
       complaints: {
         Row: ComplaintRow;
+        /**
          * Only these columns are written by the app. `status`,
          * `assigned_staff_id`, `resolved_by`, `resolved_at` and
          * `resolution_image_path` are deliberately absent: they are assigned
