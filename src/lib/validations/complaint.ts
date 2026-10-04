@@ -73,3 +73,14 @@ export const complaintDefaults: ComplaintValues = {
 export function defaultCategoryFor(area: ServiceArea) {
   return categoriesForArea(area)[0];
 }
+
+/**
+ * Validation for the staff resolution note. Shared by the Server Action and
+ * the resolution form so the rule lives in exactly one place.
+ */
+export const resolutionNoteSchema = requiredText("Resolution note", 2000).min(
+  10,
+  "The resolution note needs a bit more detail — explain what was done.",
+);
+
+export type ResolutionNoteValues = z.input<typeof resolutionNoteSchema>;

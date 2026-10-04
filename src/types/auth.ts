@@ -85,6 +85,12 @@ export type ComplaintRow = {
   priority: ComplaintPriority;
   assigned_staff_id: string | null;
   resolution_note: string | null;
+  /** Who marked the complaint resolved (staff member id), set by `advance_complaint`. */
+  resolved_by: string | null;
+  /** When the complaint was moved to `resolved`, set by `advance_complaint`. */
+  resolved_at: string | null;
+  /** Storage object path of the optional resolution photo, set by `advance_complaint`. */
+  resolution_image_path: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -120,11 +126,14 @@ export type Database = {
       };
       complaints: {
         Row: ComplaintRow;
-        /**
-         * Only these columns are written by the app. `status`, `priority`,
-         * `assigned_staff_id` and `resolution_note` are deliberately absent:
-         * they are assigned by the database or by privileged later phases, and
-         * omitting them means `insert()` will not typecheck if someone tries.
+         * Only these columns are written by the app. `status`,
+         * `assigned_staff_id`, `resolved_by`, `resolved_at` and
+         * `resolution_image_path` are deliberately absent: they are assigned
+         * by the database or by privileged later phases, and omitting them
+         * means `insert()` will not typecheck if someone tries. `priority` and
+         * `image_path` are the only columns a direct `update()` may touch —
+         * everything else goes through the SECURITY DEFINER functions in
+         * migration 0003.
          */
         Insert: Pick<
           ComplaintRow,
@@ -133,10 +142,7 @@ export type Database = {
         Update: Partial<
           Pick<
             ComplaintRow,
-            | "status"
             | "priority"
-            | "assigned_staff_id"
-            | "resolution_note"
             | "image_path"
           >
         >;
@@ -151,6 +157,13 @@ export type Database = {
           {
             foreignKeyName: "complaints_assigned_staff_id_fkey";
             columns: ["assigned_staff_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "complaints_resolved_by_fkey";
+            columns: ["resolved_by"];
             isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
@@ -191,6 +204,37 @@ export type Database = {
        */
       attach_complaint_image: {
         Args: { target_complaint_id: string; target_image_path: string };
+        Returns: boolean;
+      };
+      /**
+       * Admin-only. Assigns a complaint to a staff member and logs an
+       * `assigned` timeline event. SECURITY DEFINER — see migration 0003.
+       */
+      assign_complaint: {
+        Args: { p_complaint_id: string; p_staff_id: string };
+        Returns: boolean;
+      };
+      /**
+       * Moves a complaint forward along `assigned -> in_progress -> resolved`
+       * (or `reopened -> in_progress`). Restricted to the assigned staff member
+       * or an admin, and gated by the transition rules. SECURITY DEFINER — see
+       * migration 0003.
+       */
+      advance_complaint: {
+        Args: {
+          p_complaint_id: string;
+          p_new_status: ComplaintStatus;
+          p_note: string;
+          p_resolution_image_path: string;
+        };
+        Returns: boolean;
+      };
+      /**
+       * Reopens a resolved complaint. Restricted to the assigned staff member
+       * or an admin. SECURITY DEFINER — see migration 0003.
+       */
+      reopen_complaint: {
+        Args: { p_complaint_id: string; p_note: string };
         Returns: boolean;
       };
     };

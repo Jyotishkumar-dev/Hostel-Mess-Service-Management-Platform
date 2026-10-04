@@ -155,6 +155,19 @@ export interface Complaint {
   /** Present once work has started. */
   resolutionNote?: string;
   /**
+   * Staff member who marked the complaint resolved, read from the
+   * `resolved_by` profile join. Null until the issue is resolved.
+   */
+  resolvedBy: StaffMember | null;
+  /** When the complaint was moved to `resolved`, formatted for display. */
+  resolvedAt: string | null;
+  /**
+   * Short-lived signed URL for the optional resolution photo, resolved
+   * server-side. Null when the complaint has not been resolved or the file
+   * could not be signed.
+   */
+  resolutionImageUrl: string | null;
+  /**
    * Short-lived signed URL for the uploaded photo, resolved server-side.
    * Null when the complaint has no photo or the file could not be signed.
    */

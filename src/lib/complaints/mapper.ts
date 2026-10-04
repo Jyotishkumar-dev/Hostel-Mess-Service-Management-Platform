@@ -22,6 +22,8 @@ import type {
 /** The joined shape a complaint select returns. */
 export type ComplaintWithStaff = ComplaintDbRow & {
   assigned_staff: Pick<Profile, "id" | "full_name" | "role"> | null;
+  /** Joined profile of whoever marked the complaint resolved. */
+  resolved_by_profile: Pick<Profile, "id" | "full_name" | "role"> | null;
 };
 
 type ComplaintDbRow = {
@@ -38,6 +40,9 @@ type ComplaintDbRow = {
   priority: string;
   assigned_staff_id: string | null;
   resolution_note: string | null;
+  resolved_by: string | null;
+  resolved_at: string | null;
+  resolution_image_path: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -73,9 +78,13 @@ export function toStatusChange(event: ComplaintEventRow): StatusChange {
 export function toComplaint(
   row: ComplaintWithStaff,
   options: {
-    studentName: string;
+    /** The reporting student's name. Staff/admin can't read other profiles
+     * through RLS, so this is only passed from the student read path; when it
+     * is absent the detail page omits the "Reported by" line entirely. */
+    studentName?: string;
     events: ComplaintEventRow[];
     imageUrl?: string | null;
+    resolutionImageUrl?: string | null;
   },
 ): Complaint {
   // Sort on the raw ISO timestamp, not the formatted string: "16 Mar, 9:35 am"
@@ -83,6 +92,8 @@ export function toComplaint(
   const timeline = [...options.events]
     .sort((a, b) => a.created_at.localeCompare(b.created_at))
     .map(toStatusChange);
+
+  const studentName = options.studentName ?? "Student";
 
   return {
     id: row.id,
@@ -94,13 +105,16 @@ export function toComplaint(
     area: row.service_type as ServiceArea,
     category: row.category as ComplaintCategory,
     location: row.location,
-    studentName: options.studentName,
-    studentInitials: initialsOf(options.studentName),
+    studentName,
+    studentInitials: initialsOf(studentName),
     createdAt: formatDateTime(row.created_at),
     updatedAt: formatDateTime(row.updated_at),
     assignedStaff: staffFrom(row.assigned_staff),
     resolutionNote: row.resolution_note ?? undefined,
+    resolvedBy: staffFrom(row.resolved_by_profile),
+    resolvedAt: formatDateTime(row.resolved_at ?? null),
     imageUrl: options.imageUrl ?? null,
+    resolutionImageUrl: options.resolutionImageUrl ?? null,
     timeline,
   };
 }

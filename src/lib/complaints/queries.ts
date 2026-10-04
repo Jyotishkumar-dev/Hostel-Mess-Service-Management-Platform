@@ -2,7 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { createTypedServerClient } from "@/lib/supabase";
-import { requireUser } from "@/lib/auth/session";
+import { requireUser, requireRole } from "@/lib/auth/session";
 import { toComplaint, type ComplaintWithStaff } from "@/lib/complaints/mapper";
 import { IMAGE_BUCKET, IMAGE_URL_TTL_SECONDS } from "@/lib/complaints/constants";
 import type { ComplaintEventRow } from "@/types/auth";
@@ -24,7 +24,11 @@ export type Result<T> =
 const NOT_CONFIGURED =
   "Feedback storage is not connected yet. Add your Supabase keys to .env.local to enable it.";
 
-/** Columns selected for every complaint read. */
+/** Columns selected for the staff/admin detail and worklist. */
+export const STAFF_COMPLAINT_SELECT =
+  "id, reference, user_id, service_type, category, title, description, location, image_path, status, priority, assigned_staff_id, resolution_note, resolved_by, resolved_at, resolution_image_path, created_at, updated_at, assigned_staff:assigned_staff_id ( id, full_name, role ), resolved_by_profile:resolved_by ( id, full_name, role )";
+
+/** Columns selected for every student complaint read. */
 const COMPLAINT_SELECT =
   "id, reference, user_id, service_type, category, title, description, location, image_path, status, priority, assigned_staff_id, resolution_note, created_at, updated_at, assigned_staff:assigned_staff_id ( id, full_name, role )";
 
@@ -168,6 +172,8 @@ async function loadEvents(
   return grouped;
 }
 
+export { loadEvents };
+
 /**
  * Mints short-lived signed URLs for complaint photos, keyed by complaint id.
  *
@@ -208,4 +214,144 @@ async function signImages(
   });
 
   return byId;
+}
+
+export { signImages };
+
+/**
+ * Same as `signImages` but for the optional resolution photo stored under the
+ * `resolution/` namespace. Only signed for staff/admin, who the storage policies
+ * allow to read their own resolution evidence.
+ */
+async function signResolutionImages(
+  supabase: NonNullable<Awaited<ReturnType<typeof createTypedServerClient>>>,
+  rows: ComplaintWithStaff[],
+): Promise<Map<string, string>> {
+  const byId = new Map<string, string>();
+
+  const withPhotos = rows.filter(
+    (row): row is ComplaintWithStaff & { resolution_image_path: string } =>
+      row.resolution_image_path !== null,
+  );
+
+  if (withPhotos.length === 0) return byId;
+
+  const { data, error } = await supabase.storage
+    .from(IMAGE_BUCKET)
+    .createSignedUrls(
+      withPhotos.map((row) => row.resolution_image_path),
+      IMAGE_URL_TTL_SECONDS,
+    );
+
+  if (error) {
+    console.error("[complaints] signing resolution images failed:", error.message);
+    return byId;
+  }
+
+  data?.forEach((entry, index) => {
+    const row = withPhotos[index];
+    if (row && entry.signedUrl) byId.set(row.id, entry.signedUrl);
+  });
+
+  return byId;
+}
+
+export { signResolutionImages };
+
+/**
+ * Loads the complaints assigned to the signed-in staff member.
+ *
+ * `requireRole("staff")` throws a redirect for anyone else, and the
+ * `complaints_select_staff` RLS policy can only ever return rows that are
+ * assigned to the caller — so a staff member physically cannot read another
+ * team's issues here, no matter what the client asks for.
+ *
+ * The list is newest-first and left unsorted by priority: the shared
+ * `useComplaintFilters` hook lets the page sort by priority when required.
+ */
+export const listStaffComplaints = cache(async (): Promise<Result<Complaint[]>> => {
+  const user = await requireRole("staff");
+  const supabase = await createTypedServerClient();
+
+  if (!supabase) return { ok: false, error: NOT_CONFIGURED };
+
+  const { data, error } = await supabase
+    .from("complaints")
+    .select(STAFF_COMPLAINT_SELECT)
+    .eq("assigned_staff_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("[staff] list failed:", error.message);
+    return {
+      ok: false,
+      error: "We could not load your assigned issues right now. Please try again.",
+    };
+  }
+
+  return mapStaffRows(supabase, (data ?? []) as ComplaintWithStaff[]);
+});
+
+/**
+ * Loads a single complaint the signed-in staff member is allowed to see.
+ *
+ * Returns `null` for a missing id *and* for an issue owned by another team —
+ * the two are indistinguishable, so one staff member cannot enumerate another
+ * team's complaint ids.
+ */
+export const getStaffComplaint = cache(
+  async (id: string): Promise<Result<Complaint | null>> => {
+    const user = await requireRole("staff");
+    const supabase = await createTypedServerClient();
+
+    if (!supabase) return { ok: false, error: NOT_CONFIGURED };
+
+    const { data, error } = await supabase
+      .from("complaints")
+      .select(STAFF_COMPLAINT_SELECT)
+      .eq("id", id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("[staff] get failed:", error.message);
+      return {
+        ok: false,
+        error: "We could not open that issue right now. Please try again.",
+      };
+    }
+
+    if (!data) return { ok: true, data: null };
+
+    const mapped = await mapStaffRows(supabase, [data as ComplaintWithStaff]);
+
+    if (!mapped.ok) return mapped;
+    return { ok: true, data: mapped.data[0] ?? null };
+  },
+);
+
+/**
+ * Shared row -> domain mapper for the staff/admin read path. Joins the timeline
+ * and mints signed URLs for both the student evidence photo and the optional
+ * resolution photo.
+ */
+async function mapStaffRows(
+  supabase: NonNullable<Awaited<ReturnType<typeof createTypedServerClient>>>,
+  rows: ComplaintWithStaff[],
+): Promise<Result<Complaint[]>> {
+  if (rows.length === 0) return { ok: true, data: [] };
+
+  const events = await loadEvents(supabase, rows.map((row) => row.id));
+  const images = await signImages(supabase, rows);
+  const resolutionImages = await signResolutionImages(supabase, rows);
+
+  return {
+    ok: true,
+    data: rows.map((row) =>
+      toComplaint(row, {
+        events: events[row.id] ?? [],
+        imageUrl: images.get(row.id) ?? null,
+        resolutionImageUrl: resolutionImages.get(row.id) ?? null,
+      }),
+    ),
+  };
 }
