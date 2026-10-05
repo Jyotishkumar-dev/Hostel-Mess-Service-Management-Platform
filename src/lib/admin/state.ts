@@ -1,5 +1,3 @@
-import "server-only";
-
 /**
  * Result shape returned by the admin Server Actions. Kept outside the
  * `"use server"` module so it can be imported by client components.

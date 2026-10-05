@@ -1,5 +1,3 @@
-import "server-only";
-
 /**
  * Result shape returned by the staff Server Actions.
  *
