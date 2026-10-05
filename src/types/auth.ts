@@ -7,6 +7,7 @@
  */
 
 import type {
+  AiProcessingStatus,
   ComplaintCategory,
   ComplaintPriority,
   ComplaintStatus,
@@ -107,6 +108,32 @@ export type ComplaintEventRow = {
 };
 
 /**
+ * The `public.complaint_ai_analysis` row. 1:1 with `complaints`.
+ *
+ * AI suggestions here are advisory only — they never override the
+ * `category`/`priority` columns on the complaint itself until an admin
+ * confirms them through `apply_ai_suggestion_admin`.
+ */
+export type ComplaintAiAnalysisRow = {
+  complaint_id: string;
+  ai_category: string | null;
+  ai_priority: ComplaintPriority | null;
+  ai_summary: string | null;
+  ai_department: string | null;
+  ai_duplicate_candidate: boolean | null;
+  ai_duplicate_complaint_id: string | null;
+  ai_duplicate_reason: string | null;
+  ai_confidence: number | null;
+  ai_processing_status: AiProcessingStatus;
+  ai_processed_at: string | null;
+  ai_confirmed: boolean | null;
+  ai_reviewed_by: string | null;
+  ai_reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/**
  * Minimal hand-written `Database` type covering the Phase 2 `profiles` table
  * and the Phase 3 `complaints` / `complaint_events` tables.
  *
@@ -196,6 +223,45 @@ export type Database = {
           },
         ];
       };
+      complaint_ai_analysis: {
+        Row: ComplaintAiAnalysisRow;
+        Insert: Pick<
+          ComplaintAiAnalysisRow,
+          | "complaint_id"
+          | "ai_category"
+          | "ai_priority"
+          | "ai_summary"
+          | "ai_department"
+          | "ai_duplicate_candidate"
+          | "ai_duplicate_complaint_id"
+          | "ai_duplicate_reason"
+          | "ai_confidence"
+        >;
+        Update: Partial<Omit<ComplaintAiAnalysisRow, "complaint_id">>;
+        Relationships: [
+          {
+            foreignKeyName: "complaint_ai_analysis_complaint_id_fkey";
+            columns: ["complaint_id"];
+            isOneToOne: true;
+            referencedRelation: "complaints";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "complaint_ai_analysis_ai_duplicate_complaint_id_fkey";
+            columns: ["ai_duplicate_complaint_id"];
+            isOneToOne: false;
+            referencedRelation: "complaints";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "complaint_ai_analysis_ai_reviewed_by_fkey";
+            columns: ["ai_reviewed_by"];
+            isOneToOne: true;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: { [_ in never]: never };
     Functions: {
@@ -238,6 +304,19 @@ export type Database = {
         Args: { p_complaint_id: string; p_note: string };
         Returns: boolean;
       };
+      /**
+       * Admin-only. Confirms an AI category/priority suggestion by writing it
+       * onto the complaint's confirmed columns. SECURITY DEFINER — see
+       * migration 0004.
+       */
+      apply_ai_suggestion_admin: {
+        Args: {
+          p_complaint_id: string;
+          p_category: ComplaintCategory;
+          p_priority: ComplaintPriority;
+        };
+        Returns: boolean;
+      };
     };
     Enums: {
       user_role: UserRole;
@@ -245,6 +324,7 @@ export type Database = {
       complaint_status: ComplaintStatus;
       complaint_priority: ComplaintPriority;
       complaint_category: ComplaintCategory;
+      ai_processing_status: AiProcessingStatus;
     };
     CompositeTypes: { [_ in never]: never };
   };

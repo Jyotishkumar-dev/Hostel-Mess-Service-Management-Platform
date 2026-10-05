@@ -1,40 +1,132 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  ClipboardList,
   ArrowRight,
-  Flame,
+  ClipboardList,
+  CircleDashed,
+  AlertOctagon,
+  CheckCircle2,
+  Clock,
   ListChecks,
-  ListTodo,
-  Timer,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/layout/page-header";
 import { StatCardRow } from "@/components/dashboard/stat-card";
 import { ChartCard } from "@/components/dashboard/chart-card";
-import { TrendAreaChart, DonutChart } from "@/components/dashboard/charts";
+import { CategoryBarChart, DonutChart } from "@/components/dashboard/charts";
 import { ComplaintTable } from "@/components/feedback/complaint-table";
 import { EmptyState } from "@/components/layout/empty-state";
 import { Button } from "@/components/ui/button";
+import { listAllComplaints } from "@/lib/admin/queries";
+import { summarise, type StatTile } from "@/lib/mock/statistics";
 import {
-  MOCK_ADMIN_STATS,
-  MOCK_BY_STATUS,
-  MOCK_COMPLAINTS,
-  MOCK_ISSUES_OVER_TIME,
-  MOCK_RECURRING_ISSUES,
-} from "@/lib/mock";
-import { AREA_LABELS } from "@/config/status";
+  CATEGORY_LABELS,
+  STATUS_ORDER,
+  STATUS_STYLES,
+} from "@/config/status";
 import { StatusDot } from "@/components/feedback/status-badges";
+import type {
+  Complaint,
+  ComplaintCategory,
+  ComplaintStatus,
+} from "@/types/complaint";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard",
 };
 
-/** Issues that need a decision today, newest first. */
-const NEEDS_TRIAGE = MOCK_COMPLAINTS.filter(
-  (complaint) => complaint.status === "reported",
-);
+const STATUS_ICON: Record<ComplaintStatus, LucideIcon> = {
+  reported: CircleDashed,
+  assigned: ListChecks,
+  in_progress: Clock,
+  resolved: CheckCircle2,
+  reopened: AlertOctagon,
+};
 
-export default function AdminDashboardPage() {
+/** Headline tiles, derived from the live complaint register. */
+function adminStatTiles(summary: ReturnType<typeof summarise>): StatTile[] {
+  return [
+    {
+      label: "Total issues",
+      value: summary.total,
+      hint: "Across hostel and mess services",
+    },
+    {
+      label: "Open issues",
+      value: summary.open,
+      hint: "Reported or assigned, not yet in progress",
+    },
+    {
+      label: "Critical issues",
+      value: summary.critical,
+      hint: "Safety or hygiene related",
+    },
+    {
+      label: "Resolution rate",
+      value: summary.resolutionRate,
+      hint: "Share of issues closed",
+      suffix: "%",
+    },
+  ];
+}
+
+/** Counts per status, in workflow order, dropping zero buckets from the donut. */
+function statusCounts(complaints: Complaint[]) {
+  return STATUS_ORDER.map((status) => ({
+    label: STATUS_STYLES[status].label,
+    value: complaints.filter((c) => c.status === status).length,
+  })).filter((entry) => entry.value > 0);
+}
+
+/** Counts per category, descending, for the bar chart. */
+function categoryCounts(complaints: Complaint[]) {
+  const tally = complaints.reduce(
+    (acc, complaint) => {
+      acc[complaint.category] = (acc[complaint.category] ?? 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  return Object.entries(tally)
+    .map(([category, value]) => ({
+      label: CATEGORY_LABELS[category as ComplaintCategory],
+      value,
+    }))
+    .sort((a, b) => b.value - a.value);
+}
+
+export default async function AdminDashboardPage() {
+  const result = await listAllComplaints();
+
+  if (!result.ok) {
+    return (
+      <div className="flex flex-col gap-6">
+        <PageHeader
+          title="Campus service health"
+          description="A single view of what is open, what is critical and where the recurring problems are."
+        />
+        <EmptyState
+          icon={ListChecks}
+          title="We could not load the dashboard"
+          description={result.error}
+          action={
+            <Button asChild variant="outline">
+              <Link href="/admin">Try again</Link>
+            </Button>
+          }
+        />
+      </div>
+    );
+  }
+
+  const complaints = result.data;
+  const summary = summarise(complaints);
+
+  const needsTriage = complaints
+    .filter((c) => c.status === "reported")
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
@@ -42,8 +134,8 @@ export default function AdminDashboardPage() {
         description="A single view of what is open, what is critical and where the recurring problems are."
         actions={
           <Button asChild variant="outline">
-            <Link href="/admin/analytics">
-              Open analytics
+            <Link href="/admin/issues">
+              Open the issue register
               <ArrowRight data-icon="inline-end" aria-hidden="true" />
             </Link>
           </Button>
@@ -51,29 +143,24 @@ export default function AdminDashboardPage() {
       />
 
       <StatCardRow
-        stats={MOCK_ADMIN_STATS}
-        icons={[ClipboardList, ListTodo, Flame, Timer]}
+        stats={adminStatTiles(summary)}
+        icons={[ClipboardList, ListChecks, AlertOctagon, Clock]}
       />
 
       <div className="grid gap-4 lg:grid-cols-3">
         <ChartCard
           className="lg:col-span-2"
-          title="Issues reported over time"
-          description="Daily volume across hostel and mess services."
-          note="Illustrative sample data. Live figures are calculated from Supabase in Phase 2."
+          title="Issues by category"
+          description="Where reports tend to cluster across hostel and mess services."
         >
-          <TrendAreaChart
-            data={MOCK_ISSUES_OVER_TIME}
-            name="Issues reported"
-          />
+          <CategoryBarChart data={categoryCounts(complaints)} />
         </ChartCard>
 
         <ChartCard
           title="Open by status"
           description="Where the current backlog sits."
-          note="Illustrative sample data."
         >
-          <DonutChart data={MOCK_BY_STATUS} height={200} />
+          <DonutChart data={statusCounts(complaints)} height={200} />
         </ChartCard>
       </div>
 
@@ -94,17 +181,15 @@ export default function AdminDashboardPage() {
           />
 
           <div className="rounded-xl bg-card ring-1 ring-foreground/10">
-            {NEEDS_TRIAGE.length === 0 ? (
-              <div className="p-4">
-                <EmptyState
-                  icon={ListChecks}
-                  title="Triage is clear"
-                  description="Every reported issue has been reviewed and routed to a team."
-                />
-              </div>
+            {needsTriage.length === 0 ? (
+              <EmptyState
+                icon={CheckCircle2}
+                title="Triage is clear"
+                description="Every reported issue has been reviewed and routed to a team."
+              />
             ) : (
               <ComplaintTable
-                complaints={NEEDS_TRIAGE}
+                complaints={needsTriage}
                 caption="Issues awaiting triage"
                 basePath="/admin/issues"
                 showStudent
@@ -115,54 +200,32 @@ export default function AdminDashboardPage() {
 
         <section>
           <SectionHeading
-            title="Recurring problems"
-            description="Issues reported more than once."
+            title="Open by status"
+            description="Counts for each stage of the workflow."
             className="mb-3"
           />
 
           <ul className="rounded-xl bg-card ring-1 ring-foreground/10">
-            {MOCK_RECURRING_ISSUES.map((issue, index) => (
-              <li
-                key={issue.title}
-                className="flex items-start gap-3 px-4 py-3.5 not-last:border-b"
-              >
-                <span
-                  aria-hidden="true"
-                  className="mt-1 flex size-6 shrink-0 items-center justify-center rounded-md bg-muted text-[11px] font-medium tabular-nums"
+            {STATUS_ORDER.map((status) => {
+              const count = complaints.filter(
+                (c) => c.status === status,
+              ).length;
+              const Icon = STATUS_ICON[status];
+              return (
+                <li
+                  key={status}
+                  className="flex items-center gap-3 px-4 py-3 not-last:border-b"
                 >
-                  {index + 1}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm leading-snug">{issue.title}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {AREA_LABELS[issue.area]} · {issue.reports} reports ·{" "}
-                    {issue.lastReported}
-                  </p>
-                </div>
-              </li>
-            ))}
+                  <StatusDot status={status} />
+                  <Icon className="size-4 text-muted-foreground" aria-hidden="true" />
+                  <span className="text-sm">{STATUS_STYLES[status].label}</span>
+                  <span className="ml-auto font-medium tabular-nums">{count}</span>
+                </li>
+              );
+            })}
           </ul>
         </section>
       </div>
-
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {MOCK_BY_STATUS.map((entry) => (
-          <div
-            key={entry.status}
-            className="rounded-xl bg-card px-4 py-3.5 ring-1 ring-foreground/10"
-          >
-            <StatusDot status={entry.status} />
-            <p className="mt-2 text-lg font-semibold tabular-nums">
-              {entry.value}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <p className="text-xs text-muted-foreground">
-        All figures on this page are illustrative sample data for the Phase 1
-        preview.
-      </p>
     </div>
   );
 }

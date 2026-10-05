@@ -16,6 +16,16 @@ export const COMPLAINT_STATUSES = [
 
 export type ComplaintStatus = (typeof COMPLAINT_STATUSES)[number];
 
+/** Lifecycle states the AI processing pipeline can be in. */
+export const AI_PROCESSING_STATUSES = [
+  "pending",
+  "processing",
+  "completed",
+  "failed",
+] as const;
+
+export type AiProcessingStatus = (typeof AI_PROCESSING_STATUSES)[number];
+
 export const COMPLAINT_PRIORITIES = [
   "critical",
   "high",
@@ -174,4 +184,28 @@ export interface Complaint {
   imageUrl: string | null;
   /** Real status history, read from `complaint_events`. */
   timeline: StatusChange[];
+}
+
+/**
+ * AI analysis stored in `complaint_ai_analysis`, mapped to friendly names.
+ *
+ * Suggestion fields are advisory; the admin-confirmed values still live on the
+ * `Complaint` itself (`category`, `priority`). This object is only surfaced to
+ * admins/staff, never to the student who filed the report.
+ */
+export interface AiAnalysis {
+  complaintId: string;
+  category: string | null;
+  priority: ComplaintPriority | null;
+  summary: string | null;
+  department: string | null;
+  duplicateCandidate: boolean;
+  duplicateComplaintId: string | null;
+  duplicateReason: string | null;
+  confidence: number | null;
+  processingStatus: AiProcessingStatus;
+  processedAt: string | null;
+  confirmed: boolean;
+  reviewedBy: string | null;
+  reviewedAt: string | null;
 }

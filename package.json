@@ -12,6 +12,7 @@
     "verify:validation": "tsx scripts/verify-validation.ts"
   },
   "dependencies": {
+    "@google/genai": "^2.27.0",
     "@hookform/resolvers": "^5.9.1",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.2",
@@ -41,5 +42,5 @@
     "tsx": "^4.23.15",
     "typescript": "^5"
   },
-  "description": "Hostel and Mess Service Management Platform \u2014 closed-loop student feedback to service improvement"
+  "description": "Hostel and Mess Service Management Platform — closed-loop student feedback to service improvement"
 }
