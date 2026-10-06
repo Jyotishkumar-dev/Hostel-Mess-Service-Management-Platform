@@ -7,6 +7,10 @@ import { toComplaint, type ComplaintWithStaff } from "@/lib/complaints/mapper";
 import { IMAGE_BUCKET, IMAGE_URL_TTL_SECONDS } from "@/lib/complaints/constants";
 import type { ComplaintEventRow } from "@/types/auth";
 import type { Complaint } from "@/types/complaint";
+import type { ComplaintAiAnalysisRow } from "@/types/auth";
+import type { AiAnalysis } from "@/types/complaint";
+import { mapAiAnalysis } from "@/lib/complaints/ai";
+import { mapAiAnalysis } from "@/lib/complaints/ai";
 
 /**
  * Read side of the complaint feature.
@@ -355,3 +359,42 @@ export async function mapComplaintRows(
     ),
   };
 }
+
+export type Result<T> =
+  | { ok: true; data: T }
+  | { ok: false; error: string };
+
+/**
+ * Loads the AI analysis for a single complaint.
+ *
+ * Returns `null` when no analysis row exists yet (e.g. the AI has not run or
+ * the complaint predates Phase 6). The caller's role determines what RLS
+ * allows them to read.
+ */
+export const getAiAnalysis = cache(
+  async (complaintId: string): Promise<Result<AiAnalysis | null>> => {
+    const supabase = await createTypedServerClient();
+    if (!supabase) return { ok: false, error: NOT_CONFIGURED };
+
+    const { data, error } = await supabase
+      .from("complaint_ai_analysis")
+      .select("*")
+      .eq("complaint_id", complaintId)
+      .maybeSingle();
+
+    if (error) {
+      console.error("[ai] get failed:", error.message);
+      return {
+        ok: false,
+        error: "We could not load the AI analysis right now.",
+      };
+    }
+
+    if (!data) return { ok: true, data: null };
+
+    return {
+      ok: true,
+      data: mapAiAnalysis(data as ComplaintAiAnalysisRow),
+    };
+  },
+);

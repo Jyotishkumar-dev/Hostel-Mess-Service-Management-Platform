@@ -225,18 +225,19 @@ export type Database = {
       };
       complaint_ai_analysis: {
         Row: ComplaintAiAnalysisRow;
-        Insert: Pick<
-          ComplaintAiAnalysisRow,
-          | "complaint_id"
-          | "ai_category"
-          | "ai_priority"
-          | "ai_summary"
-          | "ai_department"
-          | "ai_duplicate_candidate"
-          | "ai_duplicate_complaint_id"
-          | "ai_duplicate_reason"
-          | "ai_confidence"
-        >;
+        Insert: {
+          complaint_id: string;
+          ai_category?: string | null;
+          ai_priority?: ComplaintPriority | null;
+          ai_summary?: string | null;
+          ai_department?: string | null;
+          ai_duplicate_candidate?: boolean | null;
+          ai_duplicate_complaint_id?: string | null;
+          ai_duplicate_reason?: string | null;
+          ai_confidence?: number | null;
+          ai_processing_status?: AiProcessingStatus | null;
+          ai_processed_at?: string | null;
+        };
         Update: Partial<Omit<ComplaintAiAnalysisRow, "complaint_id">>;
         Relationships: [
           {
