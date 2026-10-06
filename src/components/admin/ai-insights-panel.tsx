@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { applyAiSuggestionAction } from "@/lib/admin/actions";
 import { triggerAiAnalysisAction } from "@/lib/admin/ai-action";
 import type { AdminActionState } from "@/lib/admin/state";
-import type { AiAnalysis, ComplaintCategory } from "@/types/complaint";
+import type { AiAnalysis } from "@/types/complaint";
 import { CATEGORY_LABELS } from "@/config/status";
 
 const INITIAL_ADMIN_STATE: AdminActionState = { status: "idle" };
@@ -35,7 +35,7 @@ export function AiInsightsPanel({
         <p className="text-xs text-muted-foreground">
           AI analysis has not run yet for this complaint.
         </p>
-        <form action={retryAction}>
+        <form action={retryAction as unknown as (formData: FormData) => void}>
           <input type="hidden" name="complaintId" value={complaintId} />
           <Button type="submit" variant="outline" size="sm" className="w-full">
             <RefreshCcw className="mr-2 size-3.5" aria-hidden="true" />
@@ -54,7 +54,7 @@ export function AiInsightsPanel({
       <div className="flex items-center justify-between gap-2">
         <h3 className="text-sm font-medium">AI Insights</h3>
         {isFailed ? (
-          <form action={retryAction}>
+          <form action={retryAction as unknown as (formData: FormData) => void}>
             <input type="hidden" name="complaintId" value={complaintId} />
             <Button type="submit" variant="ghost" size="sm">
               <RefreshCcw className="mr-2 size-3.5" aria-hidden="true" />
@@ -83,7 +83,7 @@ export function AiInsightsPanel({
             label="Suggested Category"
             value={
               analysis.category
-                ? CATEGORY_LABELS[analysis.category as ComplaintCategory]
+                ? CATEGORY_LABELS[analysis.category as keyof typeof CATEGORY_LABELS]
                 : null
             }
             confidence={analysis.confidence}

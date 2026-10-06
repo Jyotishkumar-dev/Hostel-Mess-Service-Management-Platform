@@ -30,6 +30,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     resolvedBy: null,
     resolvedAt: null,
     resolutionImageUrl: null,
+    aiAnalysis: null,
     title: "Charging point in the reading room is broken",
     description:
       "Only one of the six sockets in the reading room works. The rest have no power at all.",
@@ -65,6 +66,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     resolvedBy: null,
     resolvedAt: null,
     resolutionImageUrl: null,
+    aiAnalysis: null,
     title: "Mess gate closes early during exams",
     description:
       "During the exam period the mess closes at 8 PM instead of 9:30 PM, which leaves no time to eat after a late paper.",
@@ -94,6 +96,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     resolvedBy: null,
     resolvedAt: null,
     resolutionImageUrl: null,
+    aiAnalysis: null,
     title: "Mess serving counter queue is badly managed",
     description:
       "At peak lunch hours the queue at the serving counter spills into the dining area. Students are skipping meals because of the wait.",
@@ -137,6 +140,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     resolvedBy: null,
     resolvedAt: null,
     resolutionImageUrl: null,
+    aiAnalysis: null,
     title: "Unauthorised entry through the back gate",
     description:
       "The back gate of the hostel block is often left unlocked at night. This was reported twice in the same week.",
@@ -178,6 +182,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     resolvedBy: null,
     resolvedAt: null,
     resolutionImageUrl: null,
+    aiAnalysis: null,
     title: "Food served with a foreign object in the bowl",
     description:
       "A piece of plastic was found in the dal at dinner. The mess staff were informed immediately but nothing has changed since.",
@@ -221,6 +226,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     resolvedBy: null,
     resolvedAt: null,
     resolutionImageUrl: null,
+    aiAnalysis: null,
     title: "Wi-Fi drops every evening around 7 PM",
     description:
       "The hostel Wi-Fi becomes unusable between 7 and 9 PM when everyone is back and streaming. Speed tests drop to almost nothing during that window.",
@@ -250,6 +256,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     resolvedBy: null,
     resolvedAt: null,
     resolutionImageUrl: null,
+    aiAnalysis: null,
     title: "Mess food served cold during lunch",
     description:
       "For the past week the roti and sabzi have been reaching the dining hall cold by the time we sit down. The same is true for the curry rotation on weekends.",
@@ -285,6 +292,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     resolvedBy: null,
     resolvedAt: null,
     resolutionImageUrl: null,
+    aiAnalysis: null,
     title: "No running water on the second floor",
     description:
       "There has been no water supply in the washrooms on the second floor since Monday morning. Around forty students are affected and we are carrying buckets from the ground floor.",
@@ -328,6 +336,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     resolvedBy: null,
     resolvedAt: null,
     resolutionImageUrl: null,
+    aiAnalysis: null,
     title: "Washroom not cleaned for three days",
     description:
       "The washroom near the study hall has not been cleaned since the weekend. There is a strong smell and the bins have not been emptied.",
@@ -383,6 +392,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     resolvedBy: null,
     resolvedAt: null,
     resolutionImageUrl: null,
+    aiAnalysis: null,
     title: "Corridor light flickering outside room 214",
     description:
       "The light outside room 214 flickers continuously and goes off for a few seconds. It is dark at night and feels unsafe walking back.",
@@ -432,6 +442,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     resolvedBy: null,
     resolvedAt: null,
     resolutionImageUrl: null,
+    aiAnalysis: null,
     title: "Washroom door lock broken",
     description:
       "The latch on the washroom door does not close properly, so the door does not stay shut.",
@@ -480,6 +491,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     resolvedBy: null,
     resolvedAt: null,
     resolutionImageUrl: null,
+    aiAnalysis: null,
     title: "Ceiling fan stopped working in study room",
     description:
       "The fan in the second-floor study room has not turned on since last week. The room gets very warm in the afternoon.",

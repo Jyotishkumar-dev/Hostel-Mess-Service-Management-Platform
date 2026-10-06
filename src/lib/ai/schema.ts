@@ -1,9 +1,8 @@
 import { z } from "zod";
 import {
-  COMPLAINT_PRIORITIES,
   HOSTEL_CATEGORIES,
   MESS_CATEGORIES,
-  type ComplaintPriority,
+  COMPLAINT_PRIORITIES,
   type ComplaintCategory,
 } from "@/types/complaint";
 

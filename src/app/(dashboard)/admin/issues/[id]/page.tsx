@@ -10,8 +10,6 @@ import { getAiAnalysis } from "@/lib/complaints/queries";
 import { LoadFailure } from "@/components/feedback/load-failure";
 import { applyAiSuggestionAction } from "@/lib/admin/actions";
 import { triggerAiAnalysisAction } from "@/lib/admin/ai-action";
-import { Button } from "@/components/ui/button";
-import { Loader2, RefreshCcw } from "lucide-react";
 import { AiInsightsPanel } from "@/components/admin/ai-insights-panel";
 
 export async function generateMetadata({
