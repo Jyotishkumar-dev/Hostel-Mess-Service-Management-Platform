@@ -22,18 +22,24 @@ import type { Complaint } from "@/types/complaint";
  * `backLabel` and the optional `actions` slot differ. Keeping it in one place
  * is what guarantees a complaint looks identical wherever it is opened.
  */
+import type { AiAnalysis } from "@/types/complaint";
+
 export function ComplaintDetail({
   complaint,
   backHref,
   backLabel,
   actions,
   showStudent = false,
+  aiAnalysis,
+  aiActions,
 }: {
   complaint: Complaint;
   backHref: string;
   backLabel: string;
   actions?: React.ReactNode;
   showStudent?: boolean;
+  aiAnalysis?: AiAnalysis | null;
+  aiActions?: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-6">
@@ -165,6 +171,12 @@ export function ComplaintDetail({
               ]}
             />
           </DetailSection>
+
+          {aiAnalysis && aiActions ? (
+            <Card>
+              <CardContent className="pt-6">{aiActions}</CardContent>
+            </Card>
+          ) : null}
         </div>
       </div>
     </div>

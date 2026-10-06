@@ -8,6 +8,7 @@ import type {
   ServiceArea,
   StaffMember,
   StatusChange,
+  AiAnalysis,
 } from "@/types/complaint";
 
 /**
@@ -87,6 +88,7 @@ export function toComplaint(
     events: ComplaintEventRow[];
     imageUrl?: string | null;
     resolutionImageUrl?: string | null;
+    aiAnalysis?: AiAnalysis | null;
   },
 ): Complaint {
   // Sort on the raw ISO timestamp, not the formatted string: "16 Mar, 9:35 am"
@@ -118,6 +120,7 @@ export function toComplaint(
     resolvedAt: formatDateTime(row.resolved_at ?? null),
     imageUrl: options.imageUrl ?? null,
     resolutionImageUrl: options.resolutionImageUrl ?? null,
+    aiAnalysis: options.aiAnalysis ?? null,
     timeline,
   };
 }

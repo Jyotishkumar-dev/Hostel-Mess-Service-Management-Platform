@@ -10,6 +10,7 @@ import {
   complaintImagePath,
   validateImage,
 } from "@/lib/validations";
+import { runAiAnalysis } from "@/lib/complaints/ai";
 import type { ComplaintActionState } from "@/lib/complaints/state";
 
 /**
@@ -141,6 +142,16 @@ export async function createComplaintAction(
       // needs a lifecycle rule to clean up, which Phase 4 will add.
       console.error("[complaints] image link failed:", linkError?.message);
     }
+  }
+
+  // Fire-and-forget AI analysis. It must not prevent the student from seeing
+  // the success response, so we never await it here — a failure is recorded
+  // inside `runAiAnalysis` and surfaced later in the admin UI.
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    runAiAnalysis(supabase, inserted.id);
+  } catch (error) {
+    console.error("[complaints] ai trigger failed:", error);
   }
 
   return {

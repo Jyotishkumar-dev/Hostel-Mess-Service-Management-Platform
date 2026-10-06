@@ -2,8 +2,17 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ComplaintDetail } from "@/components/feedback/complaint-detail";
 import { AssignStaffForm } from "@/components/admin/assign-staff-form";
-import { getAdminComplaint, listStaffProfiles } from "@/lib/admin/queries";
+import {
+  getAdminComplaint,
+  listStaffProfiles,
+} from "@/lib/admin/queries";
+import { getAiAnalysis } from "@/lib/complaints/queries";
 import { LoadFailure } from "@/components/feedback/load-failure";
+import { applyAiSuggestionAction } from "@/lib/admin/actions";
+import { triggerAiAnalysisAction } from "@/lib/admin/ai-action";
+import { Button } from "@/components/ui/button";
+import { Loader2, RefreshCcw } from "lucide-react";
+import { AiInsightsPanel } from "@/components/admin/ai-insights-panel";
 
 export async function generateMetadata({
   params,
@@ -17,15 +26,6 @@ export async function generateMetadata({
   return { title: `${result.data.reference} · Issue` };
 }
 
-/**
- * The admin view of a single issue.
- *
- * Shows the full complaint detail — which reflects the live Supabase status,
- * including any staff transitions — and, where the issue is not yet resolved,
- * a form to route it to a support staff member. Assignment is recorded through
- * the `assign_complaint` SECURITY DEFINER function, so the dropdown is the only
- * thing the UI changes: the row it writes is the same one staff read.
- */
 export default async function AdminIssuePage({
   params,
 }: {
@@ -35,6 +35,7 @@ export default async function AdminIssuePage({
 
   const complaintResult = await getAdminComplaint(id);
   const staffResult = await listStaffProfiles();
+  const aiResult = await getAiAnalysis(id);
 
   if (!complaintResult.ok) {
     return <LoadFailure message={complaintResult.error} retryHref="/admin/issues" />;
@@ -44,6 +45,7 @@ export default async function AdminIssuePage({
 
   const complaint = complaintResult.data;
   const staffOptions = staffResult.ok ? staffResult.data : [];
+  const aiAnalysis = aiResult.ok ? aiResult.data : null;
 
   const canAssign = complaint.status !== "resolved";
 
@@ -61,6 +63,15 @@ export default async function AdminIssuePage({
       backLabel="Back to issue register"
       showStudent
       actions={actions}
+      aiAnalysis={aiAnalysis}
+      aiActions={
+        <AiInsightsPanel
+          complaintId={complaint.id}
+          analysis={aiAnalysis}
+          applyAction={applyAiSuggestionAction}
+          retryAction={triggerAiAnalysisAction}
+        />
+      }
     />
   );
 }

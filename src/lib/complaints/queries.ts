@@ -10,7 +10,6 @@ import type { Complaint } from "@/types/complaint";
 import type { ComplaintAiAnalysisRow } from "@/types/auth";
 import type { AiAnalysis } from "@/types/complaint";
 import { mapAiAnalysis } from "@/lib/complaints/ai";
-import { mapAiAnalysis } from "@/lib/complaints/ai";
 
 /**
  * Read side of the complaint feature.
@@ -263,6 +262,35 @@ async function signResolutionImages(
 export { signResolutionImages };
 
 /**
+ * Loads AI analyses for a batch of complaints.
+ *
+ * Returns a map keyed by complaint id. Absence means the AI has not run yet
+ * or the complaint predates Phase 6.
+ */
+async function loadAiAnalyses(
+  supabase: NonNullable<Awaited<ReturnType<typeof createTypedServerClient>>>,
+  complaintIds: string[],
+): Promise<Record<string, AiAnalysis | null>> {
+  if (complaintIds.length === 0) return {};
+
+  const { data, error } = await supabase
+    .from("complaint_ai_analysis")
+    .select("*")
+    .in("complaint_id", complaintIds);
+
+  if (error) {
+    console.error("[ai] batch load failed:", error.message);
+    return {};
+  }
+
+  const out: Record<string, AiAnalysis | null> = {};
+  for (const row of (data ?? []) as ComplaintAiAnalysisRow[]) {
+    out[row.complaint_id] = mapAiAnalysis(row);
+  }
+  return out;
+}
+
+/**
  * Loads the complaints assigned to the signed-in staff member.
  *
  * `requireRole("staff")` throws a redirect for anyone else, and the
@@ -347,6 +375,7 @@ export async function mapComplaintRows(
   const events = await loadEvents(supabase, rows.map((row) => row.id));
   const images = await signImages(supabase, rows);
   const resolutionImages = await signResolutionImages(supabase, rows);
+  const aiAnalyses = await loadAiAnalyses(supabase, rows.map((row) => row.id));
 
   return {
     ok: true,
@@ -355,14 +384,11 @@ export async function mapComplaintRows(
         events: events[row.id] ?? [],
         imageUrl: images.get(row.id) ?? null,
         resolutionImageUrl: resolutionImages.get(row.id) ?? null,
+        aiAnalysis: aiAnalyses[row.id] ?? null,
       }),
     ),
   };
 }
-
-export type Result<T> =
-  | { ok: true; data: T }
-  | { ok: false; error: string };
 
 /**
  * Loads the AI analysis for a single complaint.

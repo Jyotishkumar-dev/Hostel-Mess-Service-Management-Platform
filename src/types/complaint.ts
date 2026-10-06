@@ -184,6 +184,8 @@ export interface Complaint {
   imageUrl: string | null;
   /** Real status history, read from `complaint_events`. */
   timeline: StatusChange[];
+  /** AI analysis, only populated for admin/staff read paths. */
+  aiAnalysis: AiAnalysis | null;
 }
 
 /**
