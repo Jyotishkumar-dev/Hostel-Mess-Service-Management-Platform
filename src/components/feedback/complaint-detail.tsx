@@ -32,6 +32,7 @@ export function ComplaintDetail({
   showStudent = false,
   aiAnalysis,
   aiActions,
+  verificationInfo,
 }: {
   complaint: Complaint;
   backHref: string;
@@ -40,6 +41,7 @@ export function ComplaintDetail({
   showStudent?: boolean;
   aiAnalysis?: AiAnalysis | null;
   aiActions?: React.ReactNode;
+  verificationInfo?: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-6">
@@ -175,6 +177,12 @@ export function ComplaintDetail({
           {aiAnalysis && aiActions ? (
             <Card>
               <CardContent className="pt-6">{aiActions}</CardContent>
+            </Card>
+          ) : null}
+
+          {verificationInfo ? (
+            <Card>
+              <CardContent className="pt-6">{verificationInfo}</CardContent>
             </Card>
           ) : null}
         </div>

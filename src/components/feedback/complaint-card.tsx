@@ -43,6 +43,12 @@ export function ComplaintCard({
         </span>
         <StatusBadge status={complaint.status} />
         <PriorityBadge priority={complaint.priority} />
+        {complaint.status === "resolved" &&
+        complaint.verificationStatus === "pending" ? (
+          <span className="rounded-full bg-status-in-progress-bg px-2 py-0.5 text-xs text-status-in-progress-fg ring-1 ring-status-in-progress/25">
+            Awaiting verification
+          </span>
+        ) : null}
       </div>
 
       <p className="mt-2.5 text-sm font-medium text-foreground group-hover:underline">

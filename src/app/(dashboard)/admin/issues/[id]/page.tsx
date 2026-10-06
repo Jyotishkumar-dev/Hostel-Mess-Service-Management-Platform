@@ -11,6 +11,7 @@ import { LoadFailure } from "@/components/feedback/load-failure";
 import { applyAiSuggestionAction } from "@/lib/admin/actions";
 import { triggerAiAnalysisAction } from "@/lib/admin/ai-action";
 import { AiInsightsPanel } from "@/components/admin/ai-insights-panel";
+import { AdminVerificationInfo } from "@/components/admin/admin-verification-info";
 
 export async function generateMetadata({
   params,
@@ -70,6 +71,7 @@ export default async function AdminIssuePage({
           retryAction={triggerAiAnalysisAction}
         />
       }
+      verificationInfo={<AdminVerificationInfo complaint={complaint} />}
     />
   );
 }

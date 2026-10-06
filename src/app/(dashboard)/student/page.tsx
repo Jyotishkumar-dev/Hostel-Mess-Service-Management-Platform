@@ -110,12 +110,17 @@ export default async function StudentDashboardPage() {
             hint: "Being worked on",
           },
           {
-            label: "Resolved",
-            value: stats.resolved,
-            hint: "Marked complete",
+            label: "Awaiting verification",
+            value: stats.awaitingVerification,
+            hint: "Resolution needs your confirmation",
+          },
+          {
+            label: "Verified",
+            value: stats.verified,
+            hint: "Confirmed by you",
           },
         ]}
-        icons={[ClipboardList, ListTodo, Timer, CheckCircle2]}
+        icons={[ClipboardList, ListTodo, Timer, CheckCircle2, CheckCircle2]}
       />
 
       <div className="grid gap-6 lg:grid-cols-3">

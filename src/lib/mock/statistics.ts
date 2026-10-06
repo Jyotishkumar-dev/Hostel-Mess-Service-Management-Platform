@@ -82,7 +82,7 @@ export const MOCK_STUDENT_STATS: StatTile[] = [
   },
 ];
 
-/** The four headline tiles on the admin dashboard. */
+/** The five headline tiles on the admin dashboard. */
 export const MOCK_ADMIN_STATS: StatTile[] = [
   {
     label: "Total issues",
@@ -98,6 +98,11 @@ export const MOCK_ADMIN_STATS: StatTile[] = [
     label: "Critical issues",
     value: MOCK_CAMPUS_SUMMARY.critical,
     hint: "Safety or hygiene related",
+  },
+  {
+    label: "Reopened issues",
+    value: MOCK_CAMPUS_SUMMARY.reopened,
+    hint: "Returned for further action",
   },
   {
     label: "Resolution rate",

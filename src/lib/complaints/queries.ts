@@ -33,7 +33,7 @@ export const STAFF_COMPLAINT_SELECT =
 
 /** Columns selected for every student complaint read. */
 const COMPLAINT_SELECT =
-  "id, reference, user_id, service_type, category, title, description, location, image_path, status, priority, assigned_staff_id, resolution_note, created_at, updated_at, assigned_staff:assigned_staff_id ( id, full_name, role )";
+  "id, reference, user_id, service_type, category, title, description, location, image_path, status, priority, assigned_staff_id, resolution_note, created_at, updated_at, verification_status, verified_at, verified_by, reopen_reason, reopened_at, reopened_by, resolution_rating, resolution_feedback, assigned_staff:assigned_staff_id ( id, full_name, role )";
 
 /**
  * Loads the signed-in student's complaints, newest first.
@@ -138,6 +138,9 @@ export type ComplaintStats = {
   reported: number;
   inProgress: number;
   resolved: number;
+  awaitingVerification: number;
+  verified: number;
+  reopened: number;
 };
 
 export function summariseComplaints(complaints: Complaint[]): ComplaintStats {
@@ -146,6 +149,11 @@ export function summariseComplaints(complaints: Complaint[]): ComplaintStats {
     reported: complaints.filter((c) => c.status === "reported").length,
     inProgress: complaints.filter((c) => c.status === "in_progress").length,
     resolved: complaints.filter((c) => c.status === "resolved").length,
+    awaitingVerification: complaints.filter(
+      (c) => c.status === "resolved" && c.verificationStatus === "pending",
+    ).length,
+    verified: complaints.filter((c) => c.status === "verified").length,
+    reopened: complaints.filter((c) => c.status === "reopened").length,
   };
 }
 

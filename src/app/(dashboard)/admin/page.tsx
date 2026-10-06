@@ -23,6 +23,7 @@ import {
   CATEGORY_LABELS,
   STATUS_ORDER,
   STATUS_STYLES,
+  STATUS_ICON,
 } from "@/config/status";
 import { StatusDot } from "@/components/feedback/status-badges";
 import type {
@@ -45,6 +46,7 @@ const STATUS_ICON: Record<ComplaintStatus, LucideIcon> = {
 
 /** Headline tiles, derived from the live complaint register. */
 function adminStatTiles(summary: ReturnType<typeof summarise>): StatTile[] {
+  const reopened = summary.reopened ?? 0;
   return [
     {
       label: "Total issues",
@@ -54,12 +56,17 @@ function adminStatTiles(summary: ReturnType<typeof summarise>): StatTile[] {
     {
       label: "Open issues",
       value: summary.open,
-      hint: "Reported or assigned, not yet in progress",
+      hint: "Not yet in progress",
     },
     {
       label: "Critical issues",
       value: summary.critical,
       hint: "Safety or hygiene related",
+    },
+    {
+      label: "Reopened issues",
+      value: reopened,
+      hint: "Returned for further action",
     },
     {
       label: "Resolution rate",
@@ -70,9 +77,19 @@ function adminStatTiles(summary: ReturnType<typeof summarise>): StatTile[] {
   ];
 }
 
+/** All statuses for the admin overview, including reopened and verified. */
+const ADMIN_STATUSES: ComplaintStatus[] = [
+  "reported",
+  "assigned",
+  "in_progress",
+  "resolved",
+  "reopened",
+  "verified",
+];
+
 /** Counts per status, in workflow order, dropping zero buckets from the donut. */
 function statusCounts(complaints: Complaint[]) {
-  return STATUS_ORDER.map((status) => ({
+  return ADMIN_STATUSES.map((status) => ({
     label: STATUS_STYLES[status].label,
     value: complaints.filter((c) => c.status === status).length,
   })).filter((entry) => entry.value > 0);
@@ -206,7 +223,7 @@ export default async function AdminDashboardPage() {
           />
 
           <ul className="rounded-xl bg-card ring-1 ring-foreground/10">
-            {STATUS_ORDER.map((status) => {
+            {ADMIN_STATUSES.map((status) => {
               const count = complaints.filter(
                 (c) => c.status === status,
               ).length;
