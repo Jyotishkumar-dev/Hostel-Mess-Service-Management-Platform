@@ -12,6 +12,7 @@ export const COMPLAINT_STATUSES = [
   "in_progress",
   "resolved",
   "reopened",
+  "verified",
 ] as const;
 
 export type ComplaintStatus = (typeof COMPLAINT_STATUSES)[number];
@@ -186,7 +187,25 @@ export interface Complaint {
   timeline: StatusChange[];
   /** AI analysis, only populated for admin/staff read paths. */
   aiAnalysis: AiAnalysis | null;
+  /** Current verification state of the resolution. */
+  verificationStatus: VerificationStatus;
+  /** When the student verified the resolution, or null. */
+  verifiedAt: string | null;
+  /** Student who verified, or null. */
+  verifiedBy: StaffMember | null;
+  /** Reopen reason supplied by the student, or null. */
+  reopenReason: string | null;
+  /** When the complaint was reopened, or null. */
+  reopenedAt: string | null;
+  /** Student who reopened, or null. */
+  reopenedBy: StaffMember | null;
+  /** Optional 1–5 rating supplied by the student after verification. */
+  resolutionRating: number | null;
+  /** Optional feedback comment from the student. */
+  resolutionFeedback: string | null;
 }
+
+export type VerificationStatus = "pending" | "confirmed" | "rejected";
 
 /**
  * AI analysis stored in `complaint_ai_analysis`, mapped to friendly names.

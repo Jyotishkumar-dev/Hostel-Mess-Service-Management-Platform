@@ -9,6 +9,7 @@ import type {
   StaffMember,
   StatusChange,
   AiAnalysis,
+  VerificationStatus,
 } from "@/types/complaint";
 
 /**
@@ -121,6 +122,30 @@ export function toComplaint(
     imageUrl: options.imageUrl ?? null,
     resolutionImageUrl: options.resolutionImageUrl ?? null,
     aiAnalysis: options.aiAnalysis ?? null,
+    verificationStatus: (row as ComplaintWithStaff & { verification_status?: string }).verification_status as VerificationStatus ?? "pending",
+    verifiedAt: (row as ComplaintWithStaff & { verified_at?: string | null }).verified_at ?? null,
+    verifiedBy: (row as ComplaintWithStaff & { verified_by?: string | null }).verified_by
+      ? {
+          id: (row as ComplaintWithStaff & { verified_by: string }).verified_by,
+          name: "",
+          role: "student",
+          team: "",
+          initials: "",
+        }
+      : null,
+    reopenReason: (row as ComplaintWithStaff & { reopen_reason?: string | null }).reopen_reason ?? null,
+    reopenedAt: (row as ComplaintWithStaff & { reopened_at?: string | null }).reopened_at ?? null,
+    reopenedBy: (row as ComplaintWithStaff & { reopened_by?: string | null }).reopened_by
+      ? {
+          id: (row as ComplaintWithStaff & { reopened_by: string }).reopened_by,
+          name: "",
+          role: "student",
+          team: "",
+          initials: "",
+        }
+      : null,
+    resolutionRating: (row as ComplaintWithStaff & { resolution_rating?: number | null }).resolution_rating ?? null,
+    resolutionFeedback: (row as ComplaintWithStaff & { resolution_feedback?: string | null }).resolution_feedback ?? null,
     timeline,
   };
 }
