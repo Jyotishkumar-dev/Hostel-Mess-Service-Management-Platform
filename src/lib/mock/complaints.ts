@@ -126,6 +126,14 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     createdAt: "15 Mar, 1:50 PM",
     updatedAt: "16 Mar, 11:20 AM",
     assignedStaff: messC,
+    verificationStatus: "pending",
+    verifiedAt: null,
+    verifiedBy: null,
+    reopenReason: null,
+    reopenedAt: null,
+    reopenedBy: null,
+    resolutionRating: null,
+    resolutionFeedback: null,
     resolutionNote:
       "A second counter is being opened during the 12:30–2:00 window.",
     timeline: [
@@ -176,6 +184,14 @@ export const MOCK_COMPLAINTS: Complaint[] = [
       team: "Hostel Security",
       initials: "PB",
     },
+    verificationStatus: "pending",
+    verifiedAt: null,
+    verifiedBy: null,
+    reopenReason: null,
+    reopenedAt: null,
+    reopenedBy: null,
+    resolutionRating: null,
+    resolutionFeedback: null,
     timeline: [
       {
         status: "reported",
