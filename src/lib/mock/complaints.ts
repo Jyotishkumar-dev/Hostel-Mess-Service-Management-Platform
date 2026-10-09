@@ -362,6 +362,14 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     createdAt: "12 Mar, 8:20 AM",
     updatedAt: "13 Mar, 11:05 AM",
     assignedStaff: maintenance,
+    verificationStatus: "pending",
+    verifiedAt: null,
+    verifiedBy: null,
+    reopenReason: null,
+    reopenedAt: null,
+    reopenedBy: null,
+    resolutionRating: null,
+    resolutionFeedback: null,
     resolutionNote:
       "Overhead tank valve found stuck. Repaired and tank refilled on 13 March.",
     timeline: [
@@ -406,6 +414,20 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     createdAt: "10 Mar, 7:20 AM",
     updatedAt: "12 Mar, 9:00 AM",
     assignedStaff: housekeeping,
+    verificationStatus: "rejected",
+    verifiedAt: null,
+    verifiedBy: null,
+    reopenReason: "Student reported the issue was not resolved.",
+    reopenedAt: "12 Mar, 9:00 AM",
+    reopenedBy: {
+      id: "student-aarav",
+      name: "Aarav Sharma",
+      role: "student",
+      team: "",
+      initials: "AS",
+    },
+    resolutionRating: null,
+    resolutionFeedback: null,
     resolutionNote:
       "Deep clean completed on 11 March, but the student reports it has slipped again.",
     timeline: [
