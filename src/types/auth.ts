@@ -338,23 +338,6 @@ export type Database = {
         Returns: boolean;
       };
     };
-        Returns: boolean;
-      };
-      /**
-       * Student-only. Confirms a resolution. SECURITY DEFINER — see migration 0005.
-       */
-      student_verify_resolution: {
-        Args: { p_complaint_id: string };
-        Returns: boolean;
-      };
-      /**
-       * Student-only. Rejects a resolution with a reason. SECURITY DEFINER — see migration 0005.
-       */
-      student_reject_resolution: {
-        Args: { p_complaint_id: string; p_reopen_reason: string };
-        Returns: boolean;
-      };
-    };
     Enums: {
       user_role: UserRole;
       service_area: ServiceArea;
