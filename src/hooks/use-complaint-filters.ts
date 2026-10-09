@@ -34,6 +34,7 @@ const STATUS_WEIGHT: Record<ComplaintStatus, number> = {
   assigned: 2,
   in_progress: 3,
   resolved: 4,
+  verified: 5,
 };
 
 export interface ComplaintFilters {

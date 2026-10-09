@@ -33,7 +33,7 @@ export const STAFF_COMPLAINT_SELECT =
 
 /** Columns selected for every student complaint read. */
 const COMPLAINT_SELECT =
-  "id, reference, user_id, service_type, category, title, description, location, image_path, status, priority, assigned_staff_id, resolution_note, created_at, updated_at, verification_status, verified_at, verified_by, reopen_reason, reopened_at, reopened_by, resolution_rating, resolution_feedback, assigned_staff:assigned_staff_id ( id, full_name, role )";
+  "id, reference, user_id, service_type, category, title, description, location, image_path, status, priority, assigned_staff_id, resolution_note, resolved_by, resolved_at, resolution_image_path, created_at, updated_at, verification_status, verified_at, verified_by, reopen_reason, reopened_at, reopened_by, resolution_rating, resolution_feedback, assigned_staff:assigned_staff_id ( id, full_name, role )";
 
 /**
  * Loads the signed-in student's complaints, newest first.

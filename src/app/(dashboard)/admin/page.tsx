@@ -23,7 +23,6 @@ import {
   CATEGORY_LABELS,
   STATUS_ORDER,
   STATUS_STYLES,
-  STATUS_ICON,
 } from "@/config/status";
 import { StatusDot } from "@/components/feedback/status-badges";
 import type {
@@ -34,14 +33,6 @@ import type {
 
 export const metadata: Metadata = {
   title: "Admin Dashboard",
-};
-
-const STATUS_ICON: Record<ComplaintStatus, LucideIcon> = {
-  reported: CircleDashed,
-  assigned: ListChecks,
-  in_progress: Clock,
-  resolved: CheckCircle2,
-  reopened: AlertOctagon,
 };
 
 /** Headline tiles, derived from the live complaint register. */

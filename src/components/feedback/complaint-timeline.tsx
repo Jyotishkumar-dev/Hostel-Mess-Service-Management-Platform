@@ -62,4 +62,5 @@ export const NEXT_STEP_HINT: Record<ComplaintStatus, string> = {
     "Marked complete. Confirm the fix, or reopen it if the problem is still there.",
   reopened:
     "Reopened with your feedback. The same team has been notified to take another look.",
+  verified: "Thank you for confirming. This issue is now closed.",
 };
