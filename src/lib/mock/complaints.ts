@@ -228,6 +228,14 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     createdAt: "14 Mar, 9:40 PM",
     updatedAt: "15 Mar, 10:15 AM",
     assignedStaff: messB,
+    verificationStatus: "pending",
+    verifiedAt: null,
+    verifiedBy: null,
+    reopenReason: null,
+    reopenedAt: null,
+    reopenedBy: null,
+    resolutionRating: null,
+    resolutionFeedback: null,
     resolutionNote:
       "Kitchen storage audit started. Supplier trace check is pending.",
     timeline: [
@@ -272,6 +280,14 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     createdAt: "14 Mar, 8:05 AM",
     updatedAt: "14 Mar, 8:05 AM",
     assignedStaff: null,
+    verificationStatus: "pending",
+    verifiedAt: null,
+    verifiedBy: null,
+    reopenReason: null,
+    reopenedAt: null,
+    reopenedBy: null,
+    resolutionRating: null,
+    resolutionFeedback: null,
     timeline: [
       {
         status: "reported",
@@ -302,6 +318,14 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     createdAt: "13 Mar, 1:05 PM",
     updatedAt: "13 Mar, 3:30 PM",
     assignedStaff: messA,
+    verificationStatus: "pending",
+    verifiedAt: null,
+    verifiedBy: null,
+    reopenReason: null,
+    reopenedAt: null,
+    reopenedBy: null,
+    resolutionRating: null,
+    resolutionFeedback: null,
     timeline: [
       {
         status: "reported",
