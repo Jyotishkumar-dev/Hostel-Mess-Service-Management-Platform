@@ -5,7 +5,6 @@ import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { verifyResolutionAction } from "@/lib/student/actions";
 import { rejectResolutionAction } from "@/lib/student/actions";
@@ -296,14 +295,14 @@ function ResolutionFeedbackForm({
               "Save feedback"
             )}
           </Button>
-          {feedbackState.status === "success" ? (
+          {state.status === "success" ? (
             <p role="status" className="text-xs text-status-resolved">
-              {feedbackState.message}
+              {state.message}
             </p>
           ) : null}
-          {feedbackState.status === "error" && !feedbackState.fieldErrors ? (
+          {state.status === "error" && !state.fieldErrors ? (
             <p role="alert" className="text-xs text-destructive">
-              {feedbackState.message}
+              {state.message}
             </p>
           ) : null}
         </form>

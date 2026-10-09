@@ -71,6 +71,23 @@ export const STATUS_STYLES: Record<ComplaintStatus, StatusStyle> = {
       "bg-status-reopened-bg text-status-reopened-fg ring-status-reopened/25",
     dotClass: "bg-status-reopened",
   },
+  verified: {
+    label: "Verified",
+    description: "The student confirmed the fix.",
+    icon: CheckCircle2,
+    badgeClass:
+      "bg-status-verified-bg text-status-verified-fg ring-status-verified/25",
+    dotClass: "bg-status-verified",
+  },
+};
+
+export const STATUS_ICON: Record<ComplaintStatus, LucideIcon> = {
+  reported: CircleDashed,
+  assigned: CircleDotDashed,
+  in_progress: AlertOctagon,
+  resolved: CheckCircle2,
+  reopened: RotateCcw,
+  verified: CheckCircle2,
 };
 
 export interface PriorityStyle {

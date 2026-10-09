@@ -86,14 +86,19 @@ export type ComplaintRow = {
   priority: ComplaintPriority;
   assigned_staff_id: string | null;
   resolution_note: string | null;
-  /** Who marked the complaint resolved (staff member id), set by `advance_complaint`. */
   resolved_by: string | null;
-  /** When the complaint was moved to `resolved`, set by `advance_complaint`. */
   resolved_at: string | null;
-  /** Storage object path of the optional resolution photo, set by `advance_complaint`. */
   resolution_image_path: string | null;
   created_at: string;
   updated_at: string;
+  verification_status: string;
+  verified_at: string | null;
+  verified_by: string | null;
+  reopen_reason: string | null;
+  reopened_at: string | null;
+  reopened_by: string | null;
+  resolution_rating: number | null;
+  resolution_feedback: string | null;
 };
 
 /** The `public.complaint_events` row (one per status change). */
@@ -316,6 +321,37 @@ export type Database = {
           p_category: ComplaintCategory;
           p_priority: ComplaintPriority;
         };
+        Returns: boolean;
+      };
+      /**
+       * Student-only. Confirms a resolution. SECURITY DEFINER — see migration 0005.
+       */
+      student_verify_resolution: {
+        Args: { p_complaint_id: string };
+        Returns: boolean;
+      };
+      /**
+       * Student-only. Rejects a resolution with a reason. SECURITY DEFINER — see migration 0005.
+       */
+      student_reject_resolution: {
+        Args: { p_complaint_id: string; p_reopen_reason: string };
+        Returns: boolean;
+      };
+    };
+        Returns: boolean;
+      };
+      /**
+       * Student-only. Confirms a resolution. SECURITY DEFINER — see migration 0005.
+       */
+      student_verify_resolution: {
+        Args: { p_complaint_id: string };
+        Returns: boolean;
+      };
+      /**
+       * Student-only. Rejects a resolution with a reason. SECURITY DEFINER — see migration 0005.
+       */
+      student_reject_resolution: {
+        Args: { p_complaint_id: string; p_reopen_reason: string };
         Returns: boolean;
       };
     };
