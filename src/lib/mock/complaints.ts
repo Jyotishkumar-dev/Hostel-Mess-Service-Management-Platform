@@ -44,6 +44,14 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     createdAt: "16 Mar, 9:35 AM",
     updatedAt: "16 Mar, 12:00 PM",
     assignedStaff: network,
+    verificationStatus: "pending",
+    verifiedAt: null,
+    verifiedBy: null,
+    reopenReason: null,
+    reopenedAt: null,
+    reopenedBy: null,
+    resolutionRating: null,
+    resolutionFeedback: null,
     timeline: [
       {
         status: "reported",
@@ -80,6 +88,14 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     createdAt: "15 Mar, 2:25 PM",
     updatedAt: "15 Mar, 2:25 PM",
     assignedStaff: null,
+    verificationStatus: "pending",
+    verifiedAt: null,
+    verifiedBy: null,
+    reopenReason: null,
+    reopenedAt: null,
+    reopenedBy: null,
+    resolutionRating: null,
+    resolutionFeedback: null,
     timeline: [
       {
         status: "reported",
