@@ -21,6 +21,7 @@ import { listAllComplaints } from "@/lib/admin/queries";
 import { summarise, type StatTile } from "@/lib/mock/statistics";
 import {
   CATEGORY_LABELS,
+  STATUS_ICON,
   STATUS_ORDER,
   STATUS_STYLES,
 } from "@/config/status";

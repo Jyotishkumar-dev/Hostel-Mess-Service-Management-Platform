@@ -186,7 +186,10 @@ export async function submitResolutionFeedbackAction(
       .update({
         resolution_rating: ratingNumber,
         resolution_feedback: trimmedComment,
-      })
+      } as Partial<{
+        resolution_rating: number | null;
+        resolution_feedback: string | null;
+      }>)
       .eq("id", complaintId)
       .eq("user_id", user.id);
 

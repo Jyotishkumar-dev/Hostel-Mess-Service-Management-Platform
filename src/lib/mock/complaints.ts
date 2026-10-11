@@ -484,6 +484,14 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     createdAt: "9 Mar, 6:45 PM",
     updatedAt: "11 Mar, 10:10 AM",
     assignedStaff: electrician,
+    verificationStatus: "pending",
+    verifiedAt: null,
+    verifiedBy: null,
+    reopenReason: null,
+    reopenedAt: null,
+    reopenedBy: null,
+    resolutionRating: null,
+    resolutionFeedback: null,
     resolutionNote:
       "Loose tube holder replaced and the driver checked. Light is working normally.",
     timeline: [
@@ -534,6 +542,14 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     createdAt: "8 Mar, 8:40 AM",
     updatedAt: "8 Mar, 3:10 PM",
     assignedStaff: maintenance,
+    verificationStatus: "pending",
+    verifiedAt: null,
+    verifiedBy: null,
+    reopenReason: null,
+    reopenedAt: null,
+    reopenedBy: null,
+    resolutionRating: null,
+    resolutionFeedback: null,
     resolutionNote: "New latch mechanism fitted the same day.",
     timeline: [
       {
@@ -583,6 +599,14 @@ export const MOCK_COMPLAINTS: Complaint[] = [
     createdAt: "7 Mar, 5:15 PM",
     updatedAt: "9 Mar, 12:30 PM",
     assignedStaff: electrician,
+    verificationStatus: "pending",
+    verifiedAt: null,
+    verifiedBy: null,
+    reopenReason: null,
+    reopenedAt: null,
+    reopenedBy: null,
+    resolutionRating: null,
+    resolutionFeedback: null,
     resolutionNote: "Capacitor replaced and the regulator recalibrated.",
     timeline: [
       {

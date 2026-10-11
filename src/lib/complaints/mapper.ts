@@ -25,9 +25,9 @@ import type {
 export type ComplaintWithStaff = ComplaintDbRow & {
   assigned_staff: Pick<Profile, "id" | "full_name" | "role"> | null;
   /** Joined profile of the reporting student (NULL where RLS hides the row). */
-  student: Pick<Profile, "full_name"> | null;
+  student?: Pick<Profile, "full_name"> | null;
   /** Joined profile of whoever marked the complaint resolved. */
-  resolved_by_profile: Pick<Profile, "id" | "full_name" | "role"> | null;
+  resolved_by_profile?: Pick<Profile, "id" | "full_name" | "role"> | null;
 };
 
 type ComplaintDbRow = {
@@ -117,7 +117,7 @@ export function toComplaint(
     updatedAt: formatDateTime(row.updated_at),
     assignedStaff: staffFrom(row.assigned_staff),
     resolutionNote: row.resolution_note ?? undefined,
-    resolvedBy: staffFrom(row.resolved_by_profile),
+    resolvedBy: row.resolved_by_profile ? staffFrom(row.resolved_by_profile) : null,
     resolvedAt: formatDateTime(row.resolved_at ?? null),
     imageUrl: options.imageUrl ?? null,
     resolutionImageUrl: options.resolutionImageUrl ?? null,
