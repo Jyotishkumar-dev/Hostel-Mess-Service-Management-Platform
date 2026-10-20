@@ -99,6 +99,9 @@ export type ComplaintRow = {
   reopened_by: string | null;
   resolution_rating: number | null;
   resolution_feedback: string | null;
+  escalation_status: string;
+  escalated_at: string | null;
+  escalation_reason: string | null;
 };
 
 /** The `public.complaint_events` row (one per status change). */
@@ -262,12 +265,56 @@ export type Database = {
           {
             foreignKeyName: "complaint_ai_analysis_ai_reviewed_by_fkey";
             columns: ["ai_reviewed_by"];
-            isOneToOne: true;
+            isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
         ];
       };
+      notifications: {
+        Row: {
+          id: string;
+          user_id: string;
+          type: "complaint_created" | "complaint_assigned" | "complaint_in_progress" | "complaint_resolved" | "verification_required" | "complaint_reopened" | "complaint_escalated" | "critical_complaint";
+          title: string;
+          message: string;
+          related_complaint_id: string | null;
+          is_read: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          type: "complaint_created" | "complaint_assigned" | "complaint_in_progress" | "complaint_resolved" | "verification_required" | "complaint_reopened" | "complaint_escalated" | "critical_complaint";
+          title: string;
+          message: string;
+          related_complaint_id?: string | null;
+          is_read?: boolean;
+          created_at?: string;
+        };
+        Update: Partial<{
+          is_read: boolean;
+          title: string;
+          message: string;
+        }>;
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "notifications_related_complaint_id_fkey";
+            columns: ["related_complaint_id"];
+            isOneToOne: false;
+            referencedRelation: "complaints";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+    };
     };
     Views: { [_ in never]: never };
     Functions: {
@@ -337,7 +384,6 @@ export type Database = {
         Args: { p_complaint_id: string; p_reopen_reason: string };
         Returns: boolean;
       };
-    };
     Enums: {
       user_role: UserRole;
       service_area: ServiceArea;
@@ -345,6 +391,7 @@ export type Database = {
       complaint_priority: ComplaintPriority;
       complaint_category: ComplaintCategory;
       ai_processing_status: AiProcessingStatus;
+      notification_type: "complaint_created" | "complaint_assigned" | "complaint_in_progress" | "complaint_resolved" | "verification_required" | "complaint_reopened" | "complaint_escalated" | "critical_complaint";
     };
     CompositeTypes: { [_ in never]: never };
   };

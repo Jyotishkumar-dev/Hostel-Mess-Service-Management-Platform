@@ -5,6 +5,7 @@ import { Menu } from "lucide-react";
 import { Brand } from "@/components/layout/brand";
 import { Button } from "@/components/ui/button";
 import { UserMenu } from "@/components/auth/user-menu";
+import { NotificationBell } from "@/components/layout/notification-bell";
 import { ROLE_NAV } from "@/config/navigation";
 import type { Role } from "@/types";
 import type { AuthUser } from "@/types/auth";
@@ -58,6 +59,7 @@ export function Topbar({
         </div>
 
         <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
+          <NotificationBell role={role} />
           <UserMenu user={user} />
         </div>
       </div>
