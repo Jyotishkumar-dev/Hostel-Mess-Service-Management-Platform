@@ -24,7 +24,10 @@ export default async function NotificationsPage() {
           <p className="text-sm text-muted-foreground">{unread.ok ? unread.data : 0} unread</p>
         </div>
         {unread.ok && unread.data > 0 && (
-          <form action={markAllNotificationsRead}>
+          <form action={async () => {
+            "use server";
+            await markAllNotificationsRead();
+          }}>
             <Button variant="outline" size="sm">
               Mark all as read
             </Button>

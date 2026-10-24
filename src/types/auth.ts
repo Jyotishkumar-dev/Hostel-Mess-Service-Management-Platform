@@ -315,7 +315,6 @@ export type Database = {
         ];
       };
     };
-    };
     Views: { [_ in never]: never };
     Functions: {
       /**
@@ -384,6 +383,7 @@ export type Database = {
         Args: { p_complaint_id: string; p_reopen_reason: string };
         Returns: boolean;
       };
+    };
     Enums: {
       user_role: UserRole;
       service_area: ServiceArea;
