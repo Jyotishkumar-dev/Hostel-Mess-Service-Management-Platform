@@ -141,13 +141,13 @@ export function ImageUploader({
       />
 
       {preview ? (
-        <div className="overflow-hidden rounded-xl border bg-muted/40">
+        <div className="overflow-hidden rounded-2xl neu-raised bg-card p-2">
           {/* A blob: URL, which next/image cannot optimise. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={preview}
             alt="Preview of the photo you selected"
-            className="max-h-72 w-full object-contain"
+            className="max-h-72 w-full rounded-xl object-contain"
           />
         </div>
       ) : (
@@ -158,26 +158,26 @@ export function ImageUploader({
           disabled={disabled || reading}
           onClick={() => inputRef.current?.click()}
           className={cn(
-            "h-auto w-full justify-start gap-3 border-dashed py-6 text-left",
+            "h-auto w-full justify-start gap-3.5 neu-inset rounded-2xl py-6 px-5 text-left bg-card/50 transition-all hover:bg-card/80",
             showError && "border-destructive/50",
           )}
         >
           {reading ? (
-            <Loader2 className="animate-spin" aria-hidden="true" />
+            <Loader2 className="animate-spin text-primary" aria-hidden="true" />
           ) : (
             <span
               aria-hidden="true"
-              className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground"
+              className="flex size-10 shrink-0 items-center justify-center rounded-xl neu-raised-sm bg-card text-primary"
             >
-              <ImagePlus className="size-4" />
+              <ImagePlus className="size-5" />
             </span>
           )}
           <span className="min-w-0">
-            <span className="block text-sm font-medium">
-              {reading ? "Reading photo…" : "Attach a photo"}
+            <span className="block text-sm font-semibold text-foreground">
+              {reading ? "Reading photo…" : "Attach evidence photo"}
             </span>
             <span className="mt-0.5 block text-xs font-normal text-muted-foreground">
-              Choose a file from your device
+              Click to browse JPG, PNG, or WebP from your device
             </span>
           </span>
         </Button>

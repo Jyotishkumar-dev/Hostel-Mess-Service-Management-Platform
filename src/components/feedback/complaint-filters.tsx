@@ -50,7 +50,7 @@ export function ComplaintFilterBar({
     complaints.filter((complaint) => complaint.status === status).length;
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4 p-4 rounded-2xl neu-raised bg-card">
       <Tabs
         value={filters.status}
         onValueChange={(value) =>
@@ -58,16 +58,16 @@ export function ComplaintFilterBar({
         }
       >
         <TabsList className="scrollbar-subtle w-full justify-start overflow-x-auto">
-          <TabsTrigger value="all" className="gap-1.5">
+          <TabsTrigger value="all" className="gap-2">
             All
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-muted-foreground font-mono">
               {complaints.length}
             </span>
           </TabsTrigger>
           {COMPLAINT_STATUSES.map((status) => (
-            <TabsTrigger key={status} value={status} className="gap-1.5">
+            <TabsTrigger key={status} value={status} className="gap-2">
               {statusStyle(status).label}
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs text-muted-foreground font-mono">
                 {countFor(status)}
               </span>
             </TabsTrigger>
@@ -75,17 +75,17 @@ export function ComplaintFilterBar({
         </TabsList>
       </Tabs>
 
-      <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-3 pt-1">
         <div className="flex items-center gap-2">
           <Label
             htmlFor={`filter-search-${visibleCount}`}
-            className="text-xs text-muted-foreground"
+            className="text-xs font-medium text-muted-foreground"
           >
             Search
           </Label>
           <div className="relative">
             <Search
-              className="absolute left-2 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground"
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground"
               aria-hidden="true"
             />
             <Input
@@ -93,7 +93,7 @@ export function ComplaintFilterBar({
               placeholder="Title, reference or location…"
               value={filters.search}
               onChange={(event) => patch({ search: event.target.value })}
-              className="pl-7 w-56"
+              className="pl-8 w-56 sm:w-64"
             />
           </div>
         </div>

@@ -24,7 +24,7 @@ export const listMyNotifications = cache(
     if (!supabase) return { ok: false, error: "Storage not configured" };
     const user = await requireUser();
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from("notifications")
       .select("*")
       .eq("user_id", user.id)
@@ -46,7 +46,7 @@ export const getUnreadCount = cache(
     if (!supabase) return { ok: false, error: "Storage not configured" };
     const user = await requireUser();
 
-    const { count, error } = await (supabase as any)
+    const { count, error } = await supabase
       .from("notifications")
       .select("*", { count: "exact", head: true })
       .eq("user_id", user.id)

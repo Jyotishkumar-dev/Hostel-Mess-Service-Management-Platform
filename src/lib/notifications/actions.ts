@@ -17,7 +17,7 @@ export async function createNotification(params: {
   try {
     const supabase = await createTypedServerClient();
     if (!supabase) return { ok: false };
-    const { error } = await (supabase as any).rpc(
+    const { error } = await supabase.rpc(
       "create_notification",
       {
         p_user_id: params.userId,
@@ -42,9 +42,9 @@ export async function markNotificationRead(id: string) {
   const supabase = await createTypedServerClient();
   if (!supabase) return { ok: false };
   const user = await requireUser();
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from("notifications")
-    .update({ is_read: true } as any)
+    .update({ is_read: true })
     .eq("id", id)
     .eq("user_id", user.id);
   if (error) return { ok: false };
@@ -56,9 +56,9 @@ export async function markAllNotificationsRead() {
   const supabase = await createTypedServerClient();
   if (!supabase) return { ok: false };
   const user = await requireUser();
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from("notifications")
-    .update({ is_read: true } as any)
+    .update({ is_read: true })
     .eq("user_id", user.id)
     .eq("is_read", false);
   if (error) return { ok: false };

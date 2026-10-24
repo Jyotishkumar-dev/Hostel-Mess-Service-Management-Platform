@@ -150,11 +150,10 @@ export function ComplaintForm() {
               <label
                 key={option}
                 className={cn(
-                  "flex cursor-pointer items-start gap-3 rounded-xl border p-3.5 transition-colors",
-                  "has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-offset-2",
+                  "flex cursor-pointer items-start gap-3.5 rounded-2xl p-4 transition-all duration-200",
                   isSelected
-                    ? "border-primary bg-accent/50"
-                    : "hover:bg-accent/30",
+                    ? "neu-raised bg-card border-l-4 border-l-primary"
+                    : "neu-interactive bg-card/60 opacity-85 hover:opacity-100",
                 )}
               >
                 <input
@@ -175,13 +174,13 @@ export function ComplaintForm() {
                 <span
                   aria-hidden="true"
                   className={cn(
-                    "flex size-9 shrink-0 items-center justify-center rounded-lg",
+                    "flex size-10 shrink-0 items-center justify-center rounded-xl transition-all",
                     isSelected
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground",
+                      ? "neu-raised-sm bg-primary text-primary-foreground shadow-xs"
+                      : "neu-inset-sm bg-card text-muted-foreground",
                   )}
                 >
-                  <Icon className="size-4" />
+                  <Icon className="size-4.5" />
                 </span>
                 <span>
                   <span className="block text-sm font-medium">
@@ -281,7 +280,7 @@ export function ComplaintForm() {
                   shouldDirty: true,
                 })
               }
-              className="rounded-full border px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-ring focus-visible:ring-2"
+              className="rounded-full neu-raised-sm bg-card px-3 py-1 text-xs font-medium text-muted-foreground transition-all duration-200 hover:text-foreground active:neu-inset-sm"
             >
               {suggestion}
             </button>

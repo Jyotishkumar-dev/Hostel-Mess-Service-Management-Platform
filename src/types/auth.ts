@@ -180,6 +180,9 @@ export type Database = {
             ComplaintRow,
             | "priority"
             | "image_path"
+            | "escalation_status"
+            | "escalated_at"
+            | "escalation_reason"
           >
         >;
         Relationships: [
@@ -381,6 +384,16 @@ export type Database = {
        */
       student_reject_resolution: {
         Args: { p_complaint_id: string; p_reopen_reason: string };
+        Returns: boolean;
+      };
+      create_notification: {
+        Args: {
+          p_user_id: string;
+          p_type: string;
+          p_title: string;
+          p_message: string;
+          p_complaint_id: string | null;
+        };
         Returns: boolean;
       };
     };

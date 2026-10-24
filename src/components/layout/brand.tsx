@@ -11,19 +11,19 @@ export function LogoMark({ className }: { className?: string }) {
     <span
       aria-hidden="true"
       className={cn(
-        "flex size-7 shrink-0 items-center justify-center rounded-[7px] bg-primary",
+        "flex size-8 shrink-0 items-center justify-center rounded-xl neu-raised-sm bg-card text-primary font-bold shadow-xs",
         className,
       )}
     >
       <svg
         viewBox="0 0 20 20"
         fill="none"
-        className="size-4 text-primary-foreground"
+        className="size-4.5 text-primary"
       >
         <path
           d="M4.5 10.4 8.3 14l7.2-8"
           stroke="currentColor"
-          strokeWidth="2"
+          strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />

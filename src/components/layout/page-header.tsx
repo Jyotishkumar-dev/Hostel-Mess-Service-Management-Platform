@@ -18,22 +18,22 @@ export function PageHeader({
   actions?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-4 border-b pb-5 sm:flex-row sm:items-start sm:justify-between">
-      <div className="flex min-w-0 items-start gap-3">
+    <div className="flex flex-col gap-4 pb-6 sm:flex-row sm:items-center sm:justify-between border-b border-border/40">
+      <div className="flex min-w-0 items-center gap-3.5">
         {Icon ? (
-          <span className="mt-0.5 hidden size-9 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground sm:flex">
-            <Icon className="size-4.5" aria-hidden="true" />
+          <span className="hidden size-11 shrink-0 items-center justify-center rounded-2xl neu-raised-sm bg-card text-primary sm:flex">
+            <Icon className="size-5" aria-hidden="true" />
           </span>
         ) : null}
         <div className="min-w-0">
-          <h1 className="truncate text-xl font-semibold tracking-tight">
+          <h1 className="truncate text-2xl font-bold tracking-tight text-foreground">
             {title}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">{description}</p>
         </div>
       </div>
       {actions ? (
-        <div className="flex shrink-0 items-center gap-2">{actions}</div>
+        <div className="flex shrink-0 items-center gap-2.5">{actions}</div>
       ) : null}
     </div>
   );

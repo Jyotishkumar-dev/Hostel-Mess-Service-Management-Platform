@@ -24,10 +24,10 @@ export function ChartCard({
   children: React.ReactNode;
 }) {
   return (
-    <Card className={className}>
+    <Card className={cn("rounded-3xl neu-raised bg-card p-2", className)}>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        {description ? <CardDescription>{description}</CardDescription> : null}
+        <CardTitle className="text-base font-bold text-foreground">{title}</CardTitle>
+        {description ? <CardDescription className="text-xs">{description}</CardDescription> : null}
         {action ? (
           <div className="col-start-2 row-span-2 row-start-1 self-start justify-self-end">
             {action}

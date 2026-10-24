@@ -28,17 +28,17 @@ export function UserMenu({ user }: { user: AuthUser }) {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="h-9 gap-2 px-1.5 sm:px-2"
+          className="h-9.5 gap-2.5 rounded-2xl neu-interactive bg-card px-2.5"
           aria-label="Account menu"
         >
-          <span className="flex size-7 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+          <span className="flex size-7.5 items-center justify-center rounded-full neu-inset-sm bg-card/70 text-xs font-bold text-primary">
             {user.initials}
           </span>
           <span className="hidden text-left sm:block">
-            <span className="block max-w-32 truncate text-xs leading-tight font-medium">
+            <span className="block max-w-32 truncate text-xs font-semibold leading-tight text-foreground">
               {user.fullName}
             </span>
-            <span className="block text-[11px] leading-tight text-muted-foreground">
+            <span className="block text-[10px] uppercase font-bold tracking-wider leading-tight text-primary">
               {roleLabel}
             </span>
           </span>

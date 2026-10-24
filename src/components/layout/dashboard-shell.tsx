@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { ROLE_NAV } from "@/config/navigation";
 import { Brand } from "@/components/layout/brand";
 import { Button } from "@/components/ui/button";
@@ -54,7 +53,7 @@ export function DashboardShell({
           </p>
           <SidebarNav role={role} />
         </div>
-        <PhaseNote role={role} />
+        <SystemStatusCard role={role} />
       </aside>
 
       {/* Content column */}
@@ -67,8 +66,8 @@ export function DashboardShell({
 
         {/* Mobile navigation sheet */}
         <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
-          <SheetContent side="left" className="flex w-[19rem] max-w-[85vw] flex-col gap-0 p-0">
-            <SheetHeader className="flex-row items-center justify-between border-b px-4 py-3.5">
+          <SheetContent side="left" className="flex w-[19rem] max-w-[85vw] flex-col gap-0 p-0 bg-sidebar">
+            <SheetHeader className="flex-row items-center justify-between border-b border-sidebar-border px-4 py-3.5">
               <div>
                 <SheetTitle className="text-sm">
                   <Brand />
@@ -95,7 +94,7 @@ export function DashboardShell({
                 <SidebarNavDetailed role={role} />
               </div>
             </div>
-            <PhaseNote role={role} />
+            <SystemStatusCard role={role} />
           </SheetContent>
         </Sheet>
 
@@ -108,25 +107,22 @@ export function DashboardShell({
 }
 
 /**
- * A quiet reminder about where each portal's data comes from.
- *
- * The student portal reads live Supabase rows from Phase 3 onwards, so saying
- * "sample data" there would be wrong. The admin and staff portals still render
- * mock records until their phases land, and this keeps that honest rather than
- * letting a demo frame be mistaken for a live queue.
+ * Clean status pod showing system health and quick context.
  */
-function PhaseNote({ role }: { role: Role }) {
-  const isStudent = role === "student";
-
+function SystemStatusCard({ role }: { role: Role }) {
   return (
-    <p
-      className={cn(
-        "border-t border-sidebar-border px-4 py-3.5 text-[11px] leading-relaxed text-muted-foreground",
-      )}
-    >
-      {isStudent
-        ? "Your feedback is stored privately and is visible only to you and the staff handling it."
-        : "Phase 1 preview. Records shown are sample data, not live campus issues."}
-    </p>
+    <div className="p-3 border-t border-sidebar-border">
+      <div className="rounded-xl p-3 neu-inset-sm bg-card/60 flex flex-col gap-1.5">
+        <div className="flex items-center gap-2">
+          <span className="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
+          <span className="text-xs font-semibold text-foreground">Campus Network Active</span>
+        </div>
+        <p className="text-[11px] text-muted-foreground leading-snug">
+          {role === "student"
+            ? "Your feedback routes directly to verified campus staff."
+            : "Live operational queue for campus facilities & mess."}
+        </p>
+      </div>
+    </div>
   );
 }

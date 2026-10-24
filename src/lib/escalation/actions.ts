@@ -13,7 +13,7 @@ export async function runEscalationCheck() {
   const supabase = await createTypedServerClient();
   if (!supabase) return { ok: false, escalated: 0 };
 
-  const { data: complaints, error } = await (supabase as any)
+  const { data: complaints, error } = await supabase
     .from("complaints")
     .select("id, priority, status, created_at, escalated_at, assigned_staff_id, user_id")
     .in("status", ["assigned", "in_progress", "reopened"])
@@ -27,26 +27,26 @@ export async function runEscalationCheck() {
   let escalatedCount = 0;
   const now = Date.now();
 
-  for (const c of (complaints ?? []) as any[]) {
+  for (const c of complaints ?? []) {
     const thresholdHours = getEscalationThreshold(c.priority);
     const created = new Date(c.created_at).getTime();
     const hours = (now - created) / (1000 * 60 * 60);
     if (hours < thresholdHours) continue;
 
-    const { error: updateError } = await (supabase as any)
+    const { error: updateError } = await supabase
       .from("complaints")
       .update({
         escalation_status: "escalated",
         escalated_at: new Date().toISOString(),
         escalation_reason: `Exceeded ${thresholdHours}h threshold for ${c.priority} priority`,
-      } as any)
+      })
       .eq("id", c.id);
 
     if (updateError) continue;
 
     // Notify admins
-    const { data: admins } = await (supabase as any).from("profiles").select("id").eq("role", "admin");
-    for (const admin of (admins ?? []) as any[]) {
+    const { data: admins } = await supabase.from("profiles").select("id").eq("role", "admin");
+    for (const admin of admins ?? []) {
       await createNotification({
         userId: admin.id,
         type: "complaint_escalated",
