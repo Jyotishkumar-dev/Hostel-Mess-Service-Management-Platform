@@ -79,9 +79,10 @@ export function ComplaintCard({
         ) : null}
       </dl>
 
-      <p className="mt-3 text-xs text-muted-foreground">
-        Updated {complaint.updatedAt}
-      </p>
+        <p className="mt-3 text-xs text-muted-foreground">
+          Updated {complaint.updatedAt}
+        </p>
+      </div>
     </Link>
   );
 }

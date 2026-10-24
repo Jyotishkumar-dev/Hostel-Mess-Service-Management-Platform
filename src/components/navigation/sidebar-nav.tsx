@@ -33,19 +33,19 @@ export function SidebarNav({ role }: { role: Role }) {
             href={item.href}
             aria-current={isActive ? "page" : undefined}
             className={cn(
-              "group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-colors",
-              "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar",
+              "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-200",
+              "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               isActive
-                ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground"
-                : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
+                ? "neu-raised-sm bg-card font-semibold text-foreground shadow-xs"
+                : "text-muted-foreground hover:bg-card/40 hover:text-foreground",
             )}
           >
             <Icon
               className={cn(
-                "size-4 shrink-0",
+                "size-4 shrink-0 transition-colors",
                 isActive
-                  ? "text-sidebar-primary"
-                  : "text-muted-foreground group-hover:text-sidebar-accent-foreground",
+                  ? "text-primary font-semibold"
+                  : "text-muted-foreground group-hover:text-foreground",
               )}
               aria-hidden="true"
             />
@@ -78,18 +78,18 @@ export function SidebarNavDetailed({ role }: { role: Role }) {
             href={item.href}
             aria-current={isActive ? "page" : undefined}
             className={cn(
-              "flex items-start gap-3 rounded-lg px-3 py-2.5 transition-colors",
+              "flex items-start gap-3.5 rounded-2xl p-3 transition-all duration-200",
               "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               isActive
-                ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                : "text-muted-foreground hover:bg-sidebar-accent/60",
+                ? "neu-raised-sm bg-card text-foreground font-medium shadow-xs"
+                : "text-muted-foreground hover:bg-card/40 hover:text-foreground",
             )}
           >
             <span
               className={cn(
-                "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg",
+                "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-xl",
                 isActive
-                  ? "bg-sidebar-accent-foreground/10 text-sidebar-primary"
+                  ? "neu-inset-sm bg-card/60 text-primary"
                   : "bg-muted text-muted-foreground",
               )}
             >
