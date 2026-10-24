@@ -24,18 +24,20 @@ export function ComplaintCard({
     <Link
       href={href}
       className={cn(
-        "group relative block overflow-hidden rounded-xl bg-card py-4 pr-4 pl-5 ring-1 ring-foreground/10 transition-colors hover:bg-accent/40 focus-visible:ring-ring focus-visible:ring-2",
+        "group relative block overflow-hidden rounded-2xl bg-card p-5 neu-interactive transition-all duration-300 hover:-translate-y-0.5",
         className,
       )}
     >
-      {/* Priority is readable at a glance without reading the text. */}
+      {/* Priority accent pill on left */}
       <span
         aria-hidden="true"
         className={cn(
-          "absolute inset-y-0 left-0 w-1",
+          "absolute inset-y-3 left-2 w-1.5 rounded-full",
           priorityStyle(complaint.priority).accentClass,
         )}
       />
+
+      <div className="pl-3">
 
       <div className="flex flex-wrap items-center gap-2">
         <span className="font-mono text-xs text-muted-foreground">

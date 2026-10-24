@@ -21,14 +21,14 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex h-5 items-center gap-1.5 rounded-full px-2 text-xs font-medium ring-1 ring-inset whitespace-nowrap",
+        "inline-flex h-6 items-center gap-1.5 rounded-full px-2.5 text-xs font-semibold neu-raised-sm whitespace-nowrap bg-card transition-all",
         style.badgeClass,
         className,
       )}
     >
       <span
         aria-hidden="true"
-        className={cn("size-1.5 rounded-full", style.dotClass)}
+        className={cn("size-2 rounded-full shadow-xs", style.dotClass)}
       />
       {style.label}
     </span>
@@ -47,7 +47,7 @@ export function PriorityBadge({
   return (
     <span
       className={cn(
-        "inline-flex h-5 items-center rounded-full px-2 text-xs font-medium ring-1 ring-inset whitespace-nowrap",
+        "inline-flex h-6 items-center rounded-full px-2.5 text-xs font-semibold neu-raised-sm whitespace-nowrap bg-card transition-all",
         style.badgeClass,
         className,
       )}

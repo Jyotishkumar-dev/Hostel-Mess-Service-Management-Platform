@@ -23,35 +23,33 @@ export function StatCard({
   value: number;
   hint: string;
   icon?: LucideIcon;
-  /** Optional change indicator. Illustrative in Phase 1. */
   trend?: { value: string; direction: "up" | "down" | "flat" };
-  /** Rendered after the number, e.g. "%" or " days". */
   suffix?: string;
 }) {
   return (
-    <Card className="gap-0 py-4">
-      <div className="flex items-start justify-between gap-3 px-4">
-        <p className="text-sm text-muted-foreground">{label}</p>
+    <Card className="gap-0 p-5 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[9px_9px_22px_var(--neu-shadow-dark),-9px_-9px_22px_var(--neu-shadow-light)]">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-xs font-medium tracking-wide uppercase text-muted-foreground">{label}</p>
         {Icon ? (
-          <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
-            <Icon className="size-4" aria-hidden="true" />
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl neu-inset-sm bg-card/70 text-primary">
+            <Icon className="size-4.5" aria-hidden="true" />
           </span>
         ) : null}
       </div>
 
-      <div className="flex items-baseline gap-1.5 px-4 pt-1.5">
-        <span className="text-2xl font-semibold tracking-tight tabular-nums">
+      <div className="flex items-baseline gap-2 pt-3">
+        <span className="text-3xl font-bold tracking-tight tabular-nums text-foreground">
           {value}
         </span>
         {suffix ? (
-          <span className="text-sm font-medium text-muted-foreground">
+          <span className="text-sm font-semibold text-muted-foreground">
             {suffix}
           </span>
         ) : null}
         {trend ? <TrendPill {...trend} /> : null}
       </div>
 
-      <p className="px-4 pt-1 text-xs text-muted-foreground">{hint}</p>
+      <p className="pt-2 text-xs text-muted-foreground/80">{hint}</p>
     </Card>
   );
 }
@@ -69,10 +67,10 @@ function TrendPill({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-xs font-medium",
+        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold neu-raised-sm",
         direction === "up" && "bg-status-resolved-bg text-status-resolved-fg",
         direction === "down" && "bg-status-reopened-bg text-status-reopened-fg",
-        direction === "flat" && "bg-muted text-muted-foreground",
+        direction === "flat" && "bg-card text-muted-foreground",
       )}
     >
       <Icon className="size-3" aria-hidden="true" />
