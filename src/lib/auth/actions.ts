@@ -8,7 +8,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { getAuthUser, roleHome } from "@/lib/auth/session";
 import { mapLoginError, mapSignupError } from "@/lib/auth/errors";
 import { loginSchema, signupSchema } from "@/lib/validations";
-import type { AuthActionState } from "@/types/auth";
+import type { AuthActionState, UserRole } from "@/types/auth";
 
 /**
  * Authentication Server Actions.
@@ -64,24 +64,29 @@ export async function signInAction(
     return { status: "error", message: NOT_CONFIGURED };
   }
 
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+  const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
 
   if (error) {
     return { status: "error", message: mapLoginError(error) };
   }
 
-  // The redirect target comes from the same trusted lookup the dashboard
-  // guards use, so it can never be influenced by the client.
-  const user = await getAuthUser();
-
-  if (!user) {
+  if (!data?.user) {
     return {
       status: "error",
-      message: "Signed in, but your profile could not be loaded. Please try again.",
+      message: "Signed in, but your user profile could not be found. Please try again.",
     };
   }
 
-  redirect(roleHome(user.role));
+  // Attempt to read the user's role directly from the profiles table
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", data.user.id)
+    .maybeSingle();
+
+  const role = (profile?.role ?? data.user.user_metadata?.role ?? "student") as UserRole;
+
+  redirect(roleHome(role));
 }
 
 /**
@@ -122,7 +127,7 @@ export async function signUpAction(
     password,
     options: {
       // Read by the database trigger when it creates the profile row.
-      data: { full_name: fullName },
+      data: { full_name: fullName, role: "student" },
     },
   });
 
@@ -136,12 +141,15 @@ export async function signUpAction(
     return {
       status: "success",
       message:
-        "Account created. Check your inbox to confirm your email address, then sign in.",
+        "Account created! Check your inbox to confirm your email address, then sign in.",
     };
   }
 
-  // Email confirmation is disabled: sign them in and let the login flow place
-  // them on the right dashboard.
+  // Email confirmation is disabled and session is active: redirect immediately
+  if (data.session) {
+    redirect(roleHome("student"));
+  }
+
   redirect("/login");
 }
 
