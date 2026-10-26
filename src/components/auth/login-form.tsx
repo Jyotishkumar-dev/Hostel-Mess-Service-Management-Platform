@@ -32,6 +32,7 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
+    setValue,
     setError,
     formState: { errors },
   } = useForm<LoginValues>({
@@ -47,6 +48,17 @@ export function LoginForm() {
       setError(field as keyof LoginValues, { type: "server", message });
     }
   }, [state, setError]);
+
+  const selectDemoRole = (role: "student" | "staff" | "admin") => {
+    const creds = {
+      student: { email: "student@campus.edu", password: "Password123!" },
+      staff: { email: "staff@campus.edu", password: "Password123!" },
+      admin: { email: "admin@campus.edu", password: "Password123!" },
+    }[role];
+
+    setValue("email", creds.email, { shouldValidate: true });
+    setValue("password", creds.password, { shouldValidate: true });
+  };
 
   const onSubmit = handleSubmit((values) => {
     const payload = new FormData();
@@ -69,6 +81,36 @@ export function LoginForm() {
         </p>
       }
     >
+      {/* Quick Role Tester Pills */}
+      <div className="mb-2 flex flex-col gap-1.5 rounded-xl neu-inset-sm p-2.5 bg-muted/40 border border-border/30">
+        <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+          Quick demo access
+        </span>
+        <div className="grid grid-cols-3 gap-1.5">
+          <button
+            type="button"
+            onClick={() => selectDemoRole("student")}
+            className="neu-interactive rounded-lg px-2.5 py-1 text-xs font-semibold text-foreground bg-card hover:bg-accent transition-all text-center"
+          >
+            🎓 Student
+          </button>
+          <button
+            type="button"
+            onClick={() => selectDemoRole("staff")}
+            className="neu-interactive rounded-lg px-2.5 py-1 text-xs font-semibold text-foreground bg-card hover:bg-accent transition-all text-center"
+          >
+            🛠️ Staff
+          </button>
+          <button
+            type="button"
+            onClick={() => selectDemoRole("admin")}
+            className="neu-interactive rounded-lg px-2.5 py-1 text-xs font-semibold text-foreground bg-card hover:bg-accent transition-all text-center"
+          >
+            🛡️ Admin
+          </button>
+        </div>
+      </div>
+
       <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
         {state.status === "error" && state.message ? (
           <AuthAlert tone="error">{state.message}</AuthAlert>

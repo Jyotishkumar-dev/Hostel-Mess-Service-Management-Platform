@@ -37,7 +37,7 @@ export function Topbar({
   const nav = ROLE_NAV[role];
 
   return (
-    <header className="sticky top-0 z-30 border-b bg-background/85 backdrop-blur-sm">
+    <header className="sticky top-0 z-30 border-b border-border/40 neu-glass transition-colors">
       <div className="flex h-14 items-center gap-3 px-4 sm:px-6">
         <Button
           variant="ghost"

@@ -132,6 +132,11 @@
   --neu-shadow-dark: rgba(166, 180, 200, 0.45);
   --neu-border: rgba(255, 255, 255, 0.7);
 
+  /* Hybrid Glassmorphic Coordinates */
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.65);
+  --glass-highlight: rgba(255, 255, 255, 0.9);
+
   /* Charts */
   --chart-1: oklch(0.5 0.14 259);
   --chart-2: oklch(0.58 0.12 195);
@@ -205,6 +210,11 @@
   --neu-shadow-light: rgba(45, 52, 68, 0.28);
   --neu-shadow-dark: rgba(10, 12, 16, 0.75);
   --neu-border: rgba(255, 255, 255, 0.06);
+
+  /* Hybrid Glassmorphic Coordinates */
+  --glass-bg: rgba(22, 29, 44, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-highlight: rgba(255, 255, 255, 0.15);
 
   --chart-1: oklch(0.68 0.13 256);
   --chart-2: oklch(0.7 0.1 195);
@@ -312,6 +322,60 @@
   .neu-glow-primary {
     box-shadow: 0 8px 20px -4px oklch(0.48 0.16 259 / 40%),
                 0 4px 10px -2px oklch(0.48 0.16 259 / 30%);
+  }
+
+  /* Hybrid Neumorphism + Glassmorphism: Frosted Translucent Tactile Surfaces */
+  .neu-glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    box-shadow: 6px 6px 20px var(--neu-shadow-dark),
+                -6px -6px 20px var(--neu-shadow-light),
+                inset 0 1px 1px var(--glass-highlight);
+    border: 1px solid var(--glass-border);
+  }
+
+  .neu-glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(18px) saturate(190%);
+    -webkit-backdrop-filter: blur(18px) saturate(190%);
+    box-shadow: 8px 8px 24px var(--neu-shadow-dark),
+                -8px -8px 24px var(--neu-shadow-light),
+                inset 0 1px 1.5px var(--glass-highlight);
+    border: 1px solid var(--glass-border);
+  }
+
+  .neu-glass-interactive {
+    background: var(--glass-bg);
+    backdrop-filter: blur(14px) saturate(175%);
+    -webkit-backdrop-filter: blur(14px) saturate(175%);
+    box-shadow: 5px 5px 14px var(--neu-shadow-dark),
+                -5px -5px 14px var(--neu-shadow-light),
+                inset 0 1px 1px var(--glass-highlight);
+    border: 1px solid var(--glass-border);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .neu-glass-interactive:hover {
+    box-shadow: 8px 8px 22px var(--neu-shadow-dark),
+                -8px -8px 22px var(--neu-shadow-light),
+                inset 0 1px 2px var(--glass-highlight);
+    transform: translateY(-1.5px);
+  }
+
+  .neu-glass-interactive:active {
+    box-shadow: inset 2px 2px 6px var(--neu-shadow-dark),
+                inset -2px -2px 6px var(--neu-shadow-light);
+    transform: translateY(0.5px);
+  }
+
+  .neu-glass-inset {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: inset 2.5px 2.5px 6px var(--neu-shadow-dark),
+                inset -2.5px -2.5px 6px var(--neu-shadow-light);
+    border: 1px solid var(--glass-border);
   }
 
   /* Thin, unobtrusive scrollbars inside panels and tables. */

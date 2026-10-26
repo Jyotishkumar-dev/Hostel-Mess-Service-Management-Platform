@@ -18,8 +18,12 @@ export function AuthShell({
   footer?: React.ReactNode;
 }) {
   return (
-    <div className="min-h-dvh flex items-center justify-center px-4 py-12 bg-background">
-      <Card className="w-full max-w-md neu-raised rounded-3xl p-4 bg-card">
+    <div className="relative min-h-dvh flex items-center justify-center px-4 py-12 bg-background overflow-hidden">
+      {/* Ambient gradient lights for frosted glass refraction */}
+      <div className="pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full bg-primary/15 blur-3xl" aria-hidden="true" />
+      <div className="pointer-events-none absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
+
+      <Card className="relative z-10 w-full max-w-md neu-glass-card rounded-3xl p-4">
         <CardHeader className="text-center pb-2">
           <div className="flex justify-center">
             <Brand />
