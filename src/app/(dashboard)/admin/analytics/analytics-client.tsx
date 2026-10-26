@@ -116,7 +116,7 @@ export function AnalyticsClient({ initialData }: { initialData: AnalyticsData })
 
       <div className="flex flex-wrap items-center gap-3">
         <select
-          className="rounded-md border bg-background px-3 py-2 text-sm"
+          className="rounded-xl border border-border/50 bg-background/80 neu-inset-sm px-3.5 py-2 text-sm text-foreground focus:outline-none"
           value={filters.dateRange}
           onChange={(e) => refresh({ ...filters, dateRange: e.target.value as AnalyticsFilters["dateRange"] })}
         >
@@ -127,11 +127,11 @@ export function AnalyticsClient({ initialData }: { initialData: AnalyticsData })
           <option value="custom">Custom</option>
         </select>
         <select
-          className="rounded-md border bg-background px-3 py-2 text-sm"
+          className="rounded-xl border border-border/50 bg-background/80 neu-inset-sm px-3.5 py-2 text-sm text-foreground focus:outline-none"
           value={filters.service}
           onChange={(e) => refresh({ ...filters, service: e.target.value as AnalyticsFilters["service"] })}
         >
-          <option value="all">All</option>
+          <option value="all">All Services</option>
           <option value="hostel">Hostel</option>
           <option value="mess">Mess</option>
         </select>
@@ -147,11 +147,11 @@ export function AnalyticsClient({ initialData }: { initialData: AnalyticsData })
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((s) => (
-          <div key={s.label} className="rounded-xl border bg-card p-4">
-            <p className="text-sm text-muted-foreground">{s.label}</p>
+          <div key={s.label} className="rounded-2xl neu-glass-card p-4 transition-all">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{s.label}</p>
             <div className="mt-2 flex items-baseline gap-1">
-              <p className="text-2xl font-semibold">{s.value}</p>
-              {s.suffix && <span className="text-sm text-muted-foreground">{s.suffix}</span>}
+              <p className="text-2xl font-bold tracking-tight text-foreground">{s.value}</p>
+              {s.suffix && <span className="text-sm font-medium text-muted-foreground">{s.suffix}</span>}
             </div>
             <p className="mt-1 text-xs text-muted-foreground">{s.hint}</p>
           </div>

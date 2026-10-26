@@ -100,7 +100,7 @@ export default async function AdminStaffPage() {
         />
 
         {/* Desktop: a scannable table. */}
-        <div className="scrollbar-subtle hidden overflow-x-auto rounded-xl bg-card ring-1 ring-foreground/10 md:block">
+        <div className="scrollbar-subtle hidden overflow-x-auto rounded-2xl neu-glass-card md:block">
           <table className="w-full text-sm">
             <caption className="sr-only">
               Support staff and their current workload
@@ -186,14 +186,14 @@ export default async function AdminStaffPage() {
             return (
               <li
                 key={member.id}
-                className="rounded-xl bg-card px-4 py-3.5 ring-1 ring-foreground/10"
+                className="rounded-2xl neu-glass-card p-4 transition-all"
               >
                 <div className="flex items-center gap-2.5">
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
                     {initialsOf(member.name)}
                   </span>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{member.name}</p>
+                    <p className="truncate text-sm font-semibold text-foreground">{member.name}</p>
                     <p className="truncate text-xs text-muted-foreground">
                       {member.role}
                     </p>
@@ -202,19 +202,19 @@ export default async function AdminStaffPage() {
                 <dl className="mt-3 flex gap-6 text-xs text-muted-foreground">
                   <div>
                     <dt>Assigned</dt>
-                    <dd className="text-sm font-medium text-foreground tabular-nums">
+                    <dd className="text-sm font-bold text-foreground tabular-nums">
                       {load.total}
                     </dd>
                   </div>
                   <div>
                     <dt>Open</dt>
-                    <dd className="text-sm font-medium text-foreground tabular-nums">
+                    <dd className="text-sm font-bold text-foreground tabular-nums">
                       {load.open}
                     </dd>
                   </div>
                   <div>
                     <dt>Resolved</dt>
-                    <dd className="text-sm font-medium text-foreground tabular-nums">
+                    <dd className="text-sm font-bold text-foreground tabular-nums">
                       {load.resolved}
                     </dd>
                   </div>
@@ -228,7 +228,7 @@ export default async function AdminStaffPage() {
       <section>
         <SectionHeading
           title="Campus backlog"
-          description="Where every open issue sits right now."
+          description="Where every open issue sits right now across facilities."
           className="mb-3"
         />
 
@@ -239,11 +239,11 @@ export default async function AdminStaffPage() {
               return (
                 <li
                   key={status}
-                  className="flex items-center gap-3 rounded-xl bg-card px-4 py-3.5 ring-1 ring-foreground/10"
+                  className="flex items-center gap-3 rounded-2xl neu-glass-card px-4 py-3.5 transition-all"
                 >
                   <span className={STATUS_STYLES[status].dotClass} />
-                  <span className="text-sm">{STATUS_STYLES[status].label}</span>
-                  <span className="ml-auto font-medium tabular-nums">{count}</span>
+                  <span className="text-sm font-medium">{STATUS_STYLES[status].label}</span>
+                  <span className="ml-auto font-bold tabular-nums text-foreground">{count}</span>
                 </li>
               );
             },

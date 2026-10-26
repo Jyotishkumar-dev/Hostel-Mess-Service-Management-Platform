@@ -3,10 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 
 /**
- * A titled panel that wraps a chart.
- *
- * The `note` line is where we state that the data is illustrative — keep it in
- * place on every mock-backed chart so nothing reads as a real measurement.
+ * A titled panel that wraps a telemetry or analytics chart.
  */
 export function ChartCard({
   title,
@@ -24,7 +21,7 @@ export function ChartCard({
   children: React.ReactNode;
 }) {
   return (
-    <Card className={cn("rounded-3xl neu-raised bg-card p-2", className)}>
+    <Card className={cn("rounded-3xl neu-glass-card p-2", className)}>
       <CardHeader>
         <CardTitle className="text-base font-bold text-foreground">{title}</CardTitle>
         {description ? <CardDescription className="text-xs">{description}</CardDescription> : null}
@@ -42,7 +39,7 @@ export function ChartCard({
   );
 }
 
-/** The standing disclaimer used on every mock-data panel. */
+/** Operational sync note or metric footer. */
 export function ChartNote({
   children,
   className,
