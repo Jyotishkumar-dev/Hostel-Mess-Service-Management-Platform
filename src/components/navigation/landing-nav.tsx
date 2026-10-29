@@ -13,7 +13,7 @@ const LINKS = [
 export function LandingNav() {
   return (
     <header className="sticky top-3 z-40 px-4 sm:px-6">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-6 rounded-2xl neu-raised bg-card/85 backdrop-blur-md px-5 sm:px-6">
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-6 rounded-2xl neu-glass px-5 sm:px-6">
         <Brand />
 
         <nav

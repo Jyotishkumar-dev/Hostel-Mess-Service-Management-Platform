@@ -96,10 +96,15 @@ export default async function LandingPage() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative overflow-hidden pt-12 pb-20 sm:pt-16 sm:pb-28">
-          <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+          {/* Ambient spatial lighting orbs for weightless glass refraction */}
+          <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 h-96 w-[48rem] rounded-full bg-primary/15 blur-3xl" aria-hidden="true" />
+          <div className="pointer-events-none absolute top-60 -left-32 h-80 w-80 rounded-full bg-accent/20 blur-3xl" aria-hidden="true" />
+          <div className="pointer-events-none absolute top-60 -right-32 h-80 w-80 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
+
+          <div className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6">
             <div className="mx-auto max-w-3xl text-center">
               {/* Floating Pill Badge */}
-              <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 neu-raised-sm bg-card text-xs font-semibold">
+              <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 neu-glass-interactive text-xs font-semibold">
                 <span className="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)] animate-pulse" />
                 <span className="text-foreground">Campus Resolve Platform</span>
                 <span className="text-muted-foreground">·</span>
@@ -123,7 +128,7 @@ export default async function LandingPage() {
                     <ArrowRight data-icon="inline-end" aria-hidden="true" />
                   </Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="rounded-2xl px-6 h-12 text-base font-medium">
+                <Button asChild size="lg" variant="outline" className="rounded-2xl px-6 h-12 text-base font-medium neu-glass-interactive">
                   <Link href="/login">Sign In to Portal</Link>
                 </Button>
               </div>
@@ -134,7 +139,7 @@ export default async function LandingPage() {
               {STATS.map((stat) => (
                 <div
                   key={stat.label}
-                  className="rounded-2xl neu-raised bg-card p-5 text-center transition-all duration-300 hover:-translate-y-1"
+                  className="rounded-2xl neu-glass-card p-5 text-center transition-all duration-300 hover:-translate-y-1"
                 >
                   <p className="text-2xl font-black tracking-tight text-primary sm:text-3xl">
                     {stat.value}
@@ -169,7 +174,7 @@ export default async function LandingPage() {
             <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {STAGES.map((stage) => (
                 <li key={stage.title}>
-                  <Card className="h-full rounded-3xl neu-raised bg-card transition-all duration-300 hover:-translate-y-1.5 p-6">
+                  <Card className="h-full rounded-3xl neu-glass-card transition-all duration-300 hover:-translate-y-1.5 p-6">
                     <CardContent className="flex h-full flex-col p-0">
                       <div className="flex items-center justify-between">
                         <span className="flex size-11 items-center justify-center rounded-2xl neu-inset-sm bg-card/70 text-primary">
@@ -212,7 +217,7 @@ export default async function LandingPage() {
               {SERVICES.map((service) => (
                 <div
                   key={service.title}
-                  className="rounded-3xl neu-raised bg-card p-7 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between"
+                  className="rounded-3xl neu-glass-card p-7 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-center gap-3">
@@ -274,8 +279,8 @@ export default async function LandingPage() {
               </div>
             </div>
 
-            {/* Interactive Timeline Mockup */}
-            <div className="rounded-3xl neu-raised bg-card p-6">
+            {/* Interactive Timeline Live Demo */}
+            <div className="rounded-3xl neu-glass-card p-6">
               <div className="flex items-center justify-between pb-4 border-b border-border/50">
                 <div className="flex items-center gap-2">
                   <span className="size-2.5 rounded-full bg-primary" />
@@ -409,7 +414,7 @@ function RoleCard({
   points: string[];
 }) {
   return (
-    <Card className="h-full rounded-3xl neu-raised bg-card p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5">
+    <Card className="h-full rounded-3xl neu-glass-card p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5">
       <CardContent className="p-0 flex flex-col h-full">
         <span className="text-xs font-bold text-primary uppercase tracking-wider">
           {role}
