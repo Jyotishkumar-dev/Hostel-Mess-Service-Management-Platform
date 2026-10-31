@@ -152,8 +152,8 @@ export function ComplaintForm() {
                 className={cn(
                   "flex cursor-pointer items-start gap-3.5 rounded-2xl p-4 transition-all duration-200",
                   isSelected
-                    ? "neu-raised bg-card border-l-4 border-l-primary"
-                    : "neu-interactive bg-card/60 opacity-85 hover:opacity-100",
+                    ? "neu-glass-card border-l-4 border-l-primary"
+                    : "neu-glass-interactive opacity-85 hover:opacity-100",
                 )}
               >
                 <input

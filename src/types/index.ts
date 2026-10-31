@@ -5,11 +5,11 @@ import type { UserRole, AuthUser, AuthActionState } from "@/types/auth";
 /** The three roles the product is designed around. */
 export const ROLES = ["student", "admin", "staff"] as const;
 
-/** Alias for backward compatibility with Phase 1 code. */
+/** Primary role definition. */
 export type Role = UserRole;
 
-/** Placeholder identity shown in the top bar during Phase 1.
- * @deprecated Use AuthUser from @/types/auth instead. */
+/** Session identity for navigation and display.
+ * Use AuthUser from @/types/auth for security boundaries. */
 export interface SessionUser {
   name: string;
   email: string;

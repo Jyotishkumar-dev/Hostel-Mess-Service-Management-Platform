@@ -28,7 +28,7 @@ export function UserMenu({ user }: { user: AuthUser }) {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="h-9.5 gap-2.5 rounded-2xl neu-interactive bg-card px-2.5"
+          className="h-9.5 gap-2.5 rounded-2xl neu-glass-interactive px-2.5"
           aria-label="Account menu"
         >
           <span className="flex size-7.5 items-center justify-center rounded-full neu-inset-sm bg-card/70 text-xs font-bold text-primary">

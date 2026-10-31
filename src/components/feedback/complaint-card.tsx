@@ -24,7 +24,7 @@ export function ComplaintCard({
     <Link
       href={href}
       className={cn(
-        "group relative block overflow-hidden rounded-2xl bg-card p-5 neu-interactive transition-all duration-300 hover:-translate-y-0.5",
+        "group relative block overflow-hidden rounded-2xl neu-glass-interactive p-5 transition-all duration-300 hover:-translate-y-1",
         className,
       )}
     >

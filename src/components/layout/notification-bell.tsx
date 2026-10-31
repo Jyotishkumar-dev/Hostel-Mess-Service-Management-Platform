@@ -54,7 +54,7 @@ export function NotificationBell({ role }: { role: string }) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative neu-interactive bg-card rounded-xl size-9.5" aria-label="Notifications">
+        <Button variant="ghost" size="icon" className="relative neu-glass-interactive rounded-xl size-9.5" aria-label="Notifications">
           <Bell className="size-4.5 text-foreground" />
           {unread > 0 && (
             <span className="absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground neu-glow-primary">
@@ -63,7 +63,7 @@ export function NotificationBell({ role }: { role: string }) {
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-full sm:max-w-md bg-card neu-raised-lg border-l border-white/40 dark:border-white/5">
+      <SheetContent side="right" className="w-full sm:max-w-md neu-glass-card border-l border-white/40 dark:border-white/5">
         <SheetHeader>
           <SheetTitle className="text-base font-semibold">Notifications</SheetTitle>
           <SheetDescription className="text-xs">Real-time resolution & escalation updates</SheetDescription>

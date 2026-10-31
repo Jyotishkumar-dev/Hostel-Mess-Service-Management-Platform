@@ -8,8 +8,7 @@ import type { AuthUser } from "@/types/auth";
  *     const user = await requireRole("student");
  *     return <RoleLayout user={user}>{children}</RoleLayout>;
  *   }
- *
- * The role comes from the Supabase session. Phase 1 used a static string.
+ * The role is verified securely from the active Supabase session.
  */
 export function RoleLayout({
   user,

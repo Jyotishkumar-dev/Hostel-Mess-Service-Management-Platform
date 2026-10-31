@@ -9,10 +9,7 @@ import {
 import type { Role, RoleNav, NavItem } from "@/types";
 
 /**
- * Static role configuration for Phase 1.
- *
- * The role switcher in the topbar has been replaced by real authentication.
- * This file now only contains navigation structure.
+ * Role-based navigation structure for the campus portals.
  */
 
 export const ROLE_NAV: Record<Role, RoleNav> = {

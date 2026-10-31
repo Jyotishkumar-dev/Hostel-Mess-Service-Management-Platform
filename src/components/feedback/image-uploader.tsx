@@ -141,7 +141,7 @@ export function ImageUploader({
       />
 
       {preview ? (
-        <div className="overflow-hidden rounded-2xl neu-raised bg-card p-2">
+        <div className="overflow-hidden rounded-2xl neu-glass-card p-2">
           {/* A blob: URL, which next/image cannot optimise. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -158,7 +158,7 @@ export function ImageUploader({
           disabled={disabled || reading}
           onClick={() => inputRef.current?.click()}
           className={cn(
-            "h-auto w-full justify-start gap-3.5 neu-inset rounded-2xl py-6 px-5 text-left bg-card/50 transition-all hover:bg-card/80",
+            "h-auto w-full justify-start gap-3.5 neu-glass-inset rounded-2xl py-6 px-5 text-left transition-all hover:opacity-95",
             showError && "border-destructive/50",
           )}
         >
@@ -167,7 +167,7 @@ export function ImageUploader({
           ) : (
             <span
               aria-hidden="true"
-              className="flex size-10 shrink-0 items-center justify-center rounded-xl neu-raised-sm bg-card text-primary"
+              className="flex size-10 shrink-0 items-center justify-center rounded-xl neu-glass-interactive text-primary"
             >
               <ImagePlus className="size-5" />
             </span>

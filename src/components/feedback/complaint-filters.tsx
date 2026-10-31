@@ -50,7 +50,7 @@ export function ComplaintFilterBar({
     complaints.filter((complaint) => complaint.status === status).length;
 
   return (
-    <div className="flex flex-col gap-4 p-4 rounded-2xl neu-raised bg-card">
+    <div className="flex flex-col gap-4 p-4.5 rounded-2xl neu-glass-card">
       <Tabs
         value={filters.status}
         onValueChange={(value) =>
