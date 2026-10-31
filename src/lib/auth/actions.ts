@@ -5,7 +5,7 @@ import "server-only";
 import { redirect } from "next/navigation";
 import { createTypedServerClient } from "@/lib/supabase";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
-import { getAuthUser, roleHome } from "@/lib/auth/session";
+import { roleHome } from "@/lib/auth/session";
 import { mapLoginError, mapSignupError } from "@/lib/auth/errors";
 import { loginSchema, signupSchema } from "@/lib/validations";
 import type { AuthActionState, UserRole } from "@/types/auth";
