@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { Download, RefreshCw } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
-import { StatCardRow } from "@/components/dashboard/stat-card";
 import { ChartCard } from "@/components/dashboard/chart-card";
 import { Button } from "@/components/ui/button";
 import {
@@ -287,15 +286,15 @@ export function AnalyticsClient({ initialData }: { initialData: AnalyticsData })
       </ChartCard>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-xl border bg-card p-4">
+        <div className="rounded-2xl neu-glass-card p-5">
           <h3 className="text-sm font-semibold">Recurring problems</h3>
           <p className="mt-1 text-xs text-muted-foreground">Repeated service/category/location combinations.</p>
           {data.recurring.length === 0 ? (
             <p className="mt-4 text-sm text-muted-foreground">No recurring patterns found for this period.</p>
           ) : (
             <div className="mt-4 space-y-2">
-              {data.recurring.map((r, idx) => (
-                <div key={r.key} className="flex items-center justify-between rounded-lg border p-3">
+              {data.recurring.map((r) => (
+                <div key={r.key} className="flex items-center justify-between rounded-xl neu-inset-sm p-3 bg-card/40">
                   <div>
                     <p className="text-sm font-medium">{r.title}</p>
                     <p className="text-xs text-muted-foreground">{r.area} • {r.lastReported}</p>
@@ -307,7 +306,7 @@ export function AnalyticsClient({ initialData }: { initialData: AnalyticsData })
           )}
         </div>
 
-        <div className="rounded-xl border bg-card p-4">
+        <div className="rounded-2xl neu-glass-card p-5">
           <h3 className="text-sm font-semibold">Service health overview</h3>
           <p className="mt-1 text-xs text-muted-foreground">Based on volume, resolution time, reopen rate, satisfaction.</p>
           {data.serviceHealth.length === 0 ? (
@@ -315,14 +314,14 @@ export function AnalyticsClient({ initialData }: { initialData: AnalyticsData })
           ) : (
             <div className="mt-4 space-y-2">
               {data.serviceHealth.slice(0, 8).map((h) => (
-                <div key={h.key} className="flex items-center justify-between rounded-lg border p-3">
+                <div key={h.key} className="flex items-center justify-between rounded-xl neu-inset-sm p-3 bg-card/40">
                   <div>
                     <p className="text-sm font-medium capitalize">{h.label}</p>
                     <p className="text-xs text-muted-foreground">
                       {h.complaints} complaints • Reopen: {h.reopenRate !== null ? `${h.reopenRate}%` : "—"} • Avg: {h.avgResolutionHours !== null ? `${h.avgResolutionHours}h` : "—"}
                     </p>
                   </div>
-                  <span className={`text-xs rounded-full px-2 py-1 ${h.status === "good" ? "bg-green-100 text-green-700" : h.status === "watch" ? "bg-yellow-100 text-yellow-700" : "bg-red-100 text-red-700"}`}>
+                  <span className={`text-xs rounded-full px-2.5 py-0.5 font-semibold ${h.status === "good" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" : h.status === "watch" ? "bg-amber-500/15 text-amber-600 dark:text-amber-400" : "bg-destructive/15 text-destructive"}`}>
                     {h.status === "good" ? "Good" : h.status === "watch" ? "Watch" : "Needs Attention"}
                   </span>
                 </div>
@@ -332,25 +331,25 @@ export function AnalyticsClient({ initialData }: { initialData: AnalyticsData })
         </div>
       </div>
 
-      <div className="rounded-xl border bg-card p-4">
+      <div className="rounded-2xl neu-glass-card p-5">
         <h3 className="text-sm font-semibold">AI Processing Metrics</h3>
         <p className="mt-1 text-xs text-muted-foreground">Duplicate detection & processing status.</p>
         <div className="mt-4 grid gap-3 sm:grid-cols-4">
-          <div className="rounded-lg border p-3">
+          <div className="rounded-xl neu-inset-sm p-3.5 bg-card/40">
             <p className="text-xs text-muted-foreground">Total Analyses</p>
-            <p className="mt-1 text-lg font-semibold">{data.aiMetrics.totalAnalyses}</p>
+            <p className="mt-1 text-lg font-bold">{data.aiMetrics.totalAnalyses}</p>
           </div>
-          <div className="rounded-lg border p-3">
+          <div className="rounded-xl neu-inset-sm p-3.5 bg-card/40">
             <p className="text-xs text-muted-foreground">Processed</p>
-            <p className="mt-1 text-lg font-semibold">{data.aiMetrics.processed}</p>
+            <p className="mt-1 text-lg font-bold text-emerald-600 dark:text-emerald-400">{data.aiMetrics.processed}</p>
           </div>
-          <div className="rounded-lg border p-3">
+          <div className="rounded-xl neu-inset-sm p-3.5 bg-card/40">
             <p className="text-xs text-muted-foreground">Failed</p>
-            <p className="mt-1 text-lg font-semibold">{data.aiMetrics.failed}</p>
+            <p className="mt-1 text-lg font-bold text-destructive">{data.aiMetrics.failed}</p>
           </div>
-          <div className="rounded-lg border p-3">
+          <div className="rounded-xl neu-inset-sm p-3.5 bg-card/40">
             <p className="text-xs text-muted-foreground">Possible Duplicates</p>
-            <p className="mt-1 text-lg font-semibold">{data.aiMetrics.duplicates}</p>
+            <p className="mt-1 text-lg font-bold text-amber-600 dark:text-amber-400">{data.aiMetrics.duplicates}</p>
           </div>
         </div>
         {data.aiMetrics.totalAnalyses === 0 && <p className="mt-3 text-sm text-muted-foreground">Not enough data yet.</p>}

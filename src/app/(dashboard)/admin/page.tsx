@@ -3,13 +3,11 @@ import Link from "next/link";
 import {
   ArrowRight,
   ClipboardList,
-  CircleDashed,
   AlertOctagon,
   CheckCircle2,
   Clock,
   ListChecks,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/layout/page-header";
 import { StatCardRow } from "@/components/dashboard/stat-card";
 import { ChartCard } from "@/components/dashboard/chart-card";
@@ -22,7 +20,6 @@ import { summarise, type StatTile } from "@/lib/mock/statistics";
 import {
   CATEGORY_LABELS,
   STATUS_ICON,
-  STATUS_ORDER,
   STATUS_STYLES,
 } from "@/config/status";
 import { StatusDot } from "@/components/feedback/status-badges";
@@ -189,7 +186,7 @@ export default async function AdminDashboardPage() {
             className="mb-3"
           />
 
-          <div className="rounded-xl bg-card ring-1 ring-foreground/10">
+          <div className="rounded-2xl neu-glass-card overflow-hidden">
             {needsTriage.length === 0 ? (
               <EmptyState
                 icon={CheckCircle2}
@@ -214,7 +211,7 @@ export default async function AdminDashboardPage() {
             className="mb-3"
           />
 
-          <ul className="rounded-xl bg-card ring-1 ring-foreground/10">
+          <ul className="rounded-2xl neu-glass-card overflow-hidden">
             {ADMIN_STATUSES.map((status) => {
               const count = complaints.filter(
                 (c) => c.status === status,

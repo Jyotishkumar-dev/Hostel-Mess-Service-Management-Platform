@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle2, Clock, RotateCcw, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, RotateCcw } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Complaint } from "@/types/complaint";
 

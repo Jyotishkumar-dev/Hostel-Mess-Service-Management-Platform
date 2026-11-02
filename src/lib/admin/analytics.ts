@@ -148,17 +148,6 @@ function formatDateLabel(dateStr: string): string {
   }).format(d);
 }
 
-function formatWeekLabel(dateStr: string): string {
-  const d = new Date(dateStr);
-  if (isNaN(d.getTime())) return dateStr;
-  const start = new Date(d);
-  start.setDate(d.getDate() - d.getDay());
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6);
-  const fmt = new Intl.DateTimeFormat("en-IN", { month: "short", day: "numeric" });
-  return `${fmt.format(start)}–${fmt.format(end)}`;
-}
-
 function hoursBetween(start?: string | null, end?: string | null): number | null {
   if (!start || !end) return null;
   const s = new Date(start);

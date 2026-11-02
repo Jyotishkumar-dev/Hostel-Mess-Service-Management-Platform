@@ -3,8 +3,6 @@
 import { useActionState } from "react";
 import { CheckCircle2, Loader2, RefreshCcw, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { applyAiSuggestionAction } from "@/lib/admin/actions";
-import { triggerAiAnalysisAction } from "@/lib/admin/ai-action";
 import type { AdminActionState } from "@/lib/admin/state";
 import type { AiAnalysis } from "@/types/complaint";
 import { CATEGORY_LABELS } from "@/config/status";

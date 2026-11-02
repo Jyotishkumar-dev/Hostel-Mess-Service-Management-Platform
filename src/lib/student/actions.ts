@@ -27,7 +27,7 @@ export async function verifyResolutionAction(
   const supabase = await createTypedServerClient();
   if (!supabase) return { status: "error", message: NOT_CONFIGURED };
 
-  const user = await requireUser();
+  await requireUser();
 
   const complaintId = formData.get("complaintId")?.toString();
   if (!complaintId) {
@@ -86,7 +86,7 @@ export async function rejectResolutionAction(
   const supabase = await createTypedServerClient();
   if (!supabase) return { status: "error", message: NOT_CONFIGURED };
 
-  const user = await requireUser();
+  await requireUser();
 
   const complaintId = formData.get("complaintId")?.toString();
   const reopenReason = formData.get("reopenReason")?.toString();
