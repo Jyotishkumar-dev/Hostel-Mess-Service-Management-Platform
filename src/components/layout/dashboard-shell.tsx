@@ -41,9 +41,16 @@ export function DashboardShell({
   const nav = ROLE_NAV[role];
 
   return (
-    <div className="min-h-dvh bg-background">
+    <div className="relative min-h-dvh bg-background overflow-x-hidden">
+      {/* Ambient background light orbs for frosted glass depth & weightlessness */}
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden opacity-60 dark:opacity-40" aria-hidden="true">
+        <div className="absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-primary/10 blur-[100px] animate-pulse" />
+        <div className="absolute top-1/2 -right-24 h-96 w-96 rounded-full bg-chart-2/10 blur-[120px]" />
+        <div className="absolute -bottom-32 left-1/3 h-96 w-96 rounded-full bg-chart-4/10 blur-[110px]" />
+      </div>
+
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r bg-sidebar lg:flex">
+      <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-sidebar-border bg-sidebar/85 backdrop-blur-2xl lg:flex z-30">
         <div className="flex h-14 items-center border-b border-sidebar-border px-4">
           <Brand />
         </div>
@@ -112,9 +119,9 @@ export function DashboardShell({
 function SystemStatusCard({ role }: { role: Role }) {
   return (
     <div className="p-3 border-t border-sidebar-border">
-      <div className="rounded-xl p-3 neu-inset-sm bg-card/60 flex flex-col gap-1.5">
+      <div className="rounded-xl p-3 neu-glass-inset flex flex-col gap-1.5">
         <div className="flex items-center gap-2">
-          <span className="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
+          <span className="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)] animate-pulse" />
           <span className="text-xs font-semibold text-foreground">Campus Network Active</span>
         </div>
         <p className="text-[11px] text-muted-foreground leading-snug">

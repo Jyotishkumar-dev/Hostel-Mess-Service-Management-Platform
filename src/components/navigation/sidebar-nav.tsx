@@ -36,7 +36,7 @@ export function SidebarNav({ role }: { role: Role }) {
               "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-200",
               "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               isActive
-                ? "neu-raised-sm bg-card font-semibold text-foreground shadow-xs"
+                ? "neu-glass-card font-semibold text-primary shadow-xs"
                 : "text-muted-foreground hover:bg-card/40 hover:text-foreground",
             )}
           >
@@ -81,7 +81,7 @@ export function SidebarNavDetailed({ role }: { role: Role }) {
               "flex items-start gap-3.5 rounded-2xl p-3 transition-all duration-200",
               "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               isActive
-                ? "neu-raised-sm bg-card text-foreground font-medium shadow-xs"
+                ? "neu-glass-card text-foreground font-medium shadow-xs"
                 : "text-muted-foreground hover:bg-card/40 hover:text-foreground",
             )}
           >
@@ -89,7 +89,7 @@ export function SidebarNavDetailed({ role }: { role: Role }) {
               className={cn(
                 "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-xl",
                 isActive
-                  ? "neu-inset-sm bg-card/60 text-primary"
+                  ? "neu-glass-inset text-primary"
                   : "bg-muted text-muted-foreground",
               )}
             >
