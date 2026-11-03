@@ -429,7 +429,7 @@ function SubmittedConfirmation({
   return (
     <div
       role="status"
-      className="flex flex-col items-start gap-5 rounded-xl border border-status-reported/25 bg-status-reported-bg/50 p-6"
+      className="flex flex-col items-start gap-5 rounded-2xl neu-glass-card border border-status-reported/30 p-7 shadow-lg"
     >
       <span
         aria-hidden="true"

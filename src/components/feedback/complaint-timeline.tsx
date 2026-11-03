@@ -20,14 +20,14 @@ export function ComplaintTimeline({ complaint }: { complaint: Complaint }) {
             {!isLast ? (
               <span
                 aria-hidden="true"
-                className="absolute top-6 left-[7px] h-[calc(100%+0.25rem)] w-px bg-border"
+                className="absolute top-6 left-[7px] h-[calc(100%+0.5rem)] w-px bg-gradient-to-b from-primary/30 via-border to-border/20"
               />
             ) : null}
 
             <span
               aria-hidden="true"
               className={cn(
-                "relative mt-1 size-[15px] shrink-0 rounded-full ring-4 ring-card",
+                "relative mt-1 size-[15px] shrink-0 rounded-full ring-4 ring-card shadow-xs",
                 style.dotClass,
               )}
             />

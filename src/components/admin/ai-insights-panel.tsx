@@ -63,15 +63,15 @@ export function AiInsightsPanel({
       </div>
 
       {isPending ? (
-        <div className="flex items-center gap-2 rounded-lg border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 rounded-xl neu-glass-inset px-3.5 py-2.5 text-xs text-muted-foreground">
           <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
-          Analysing feedback…
+          Analysing feedback with campus intelligence…
         </div>
       ) : isFailed ? (
-        <div className="flex items-start gap-2 rounded-lg border border-status-resolved/25 bg-status-resolved-bg/50 px-3.5 py-2.5 text-sm">
+        <div className="flex items-start gap-2 rounded-xl neu-glass border border-status-resolved/25 bg-status-resolved-bg/40 px-3.5 py-2.5 text-sm">
           <AlertTriangle className="mt-0.5 size-4 text-status-resolved" aria-hidden="true" />
           <span>
-            AI analysis is unavailable. The complaint can still be reviewed and
+            AI analysis is temporarily unavailable. The complaint can still be reviewed and
             resolved manually.
           </span>
         </div>
@@ -107,14 +107,14 @@ export function AiInsightsPanel({
           </div>
 
           {analysis.duplicateCandidate ? (
-            <div className="rounded-lg border border-status-resolved/25 bg-status-resolved-bg/50 px-3.5 py-2.5 text-sm">
-              <p className="font-medium">Possible duplicate</p>
+            <div className="rounded-xl neu-glass-card border border-status-resolved/30 px-3.5 py-2.5 text-sm">
+              <p className="font-medium text-foreground">Possible duplicate</p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {analysis.duplicateReason ??
                   "A similar unresolved complaint was found."}
               </p>
               {analysis.duplicateComplaintId ? (
-                <p className="mt-1 font-mono text-xs">
+                <p className="mt-1 font-mono text-xs text-primary font-medium">
                   {analysis.duplicateComplaintId}
                 </p>
               ) : null}

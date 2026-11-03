@@ -54,7 +54,7 @@ export function DetailSection({
       <CardHeader>
         <div className="flex items-center gap-2.5">
           {Icon ? (
-            <span className="flex size-7.5 shrink-0 items-center justify-center rounded-xl neu-inset-sm bg-card/60 text-primary">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-xl neu-glass-inset text-primary">
               <Icon className="size-4" aria-hidden="true" />
             </span>
           ) : null}

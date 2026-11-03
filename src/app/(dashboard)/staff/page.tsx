@@ -144,11 +144,11 @@ export default async function StaffDashboardPage() {
               description="Issues you resolve will be listed here once marked complete."
             />
           ) : (
-            <ul className="rounded-xl bg-card ring-1 ring-foreground/10">
+            <ul className="rounded-2xl neu-glass-card overflow-hidden">
               {done.map((complaint) => (
                 <li
                   key={complaint.id}
-                  className="px-4 py-3.5 not-last:border-b"
+                  className="px-4 py-3.5 not-last:border-b border-border/40 transition-colors hover:bg-card/40"
                 >
                   <Link
                     href={`/staff/issues/${complaint.id}`}

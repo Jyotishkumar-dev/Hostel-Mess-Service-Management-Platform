@@ -21,7 +21,7 @@ export function PageHeader({
     <div className="flex flex-col gap-4 pb-6 sm:flex-row sm:items-center sm:justify-between border-b border-border/40">
       <div className="flex min-w-0 items-center gap-3.5">
         {Icon ? (
-          <span className="hidden size-11 shrink-0 items-center justify-center rounded-2xl neu-raised-sm bg-card text-primary sm:flex">
+          <span className="hidden size-11 shrink-0 items-center justify-center rounded-2xl neu-glass-card text-primary sm:flex">
             <Icon className="size-5" aria-hidden="true" />
           </span>
         ) : null}

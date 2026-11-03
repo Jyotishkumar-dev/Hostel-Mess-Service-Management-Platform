@@ -31,7 +31,7 @@ export function StatCard({
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs font-medium tracking-wide uppercase text-muted-foreground">{label}</p>
         {Icon ? (
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl neu-inset-sm bg-card/70 text-primary">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl neu-glass-inset text-primary">
             <Icon className="size-4.5" aria-hidden="true" />
           </span>
         ) : null}
